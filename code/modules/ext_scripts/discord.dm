@@ -18,9 +18,7 @@
 	if (config.discord_bot_host)
 		arguments += " --host=\"[config.discord_bot_host]\""
 	if (config.discord_bot_port)
-		arguments += " --port=[config.discord_bot_port]"
-
-	message = replacetext(message, "\"", "\\\"")
+		arguments += " --port=[config.discord_bot_port]\""
 
 	ext_python("discordbot_message.py", "[arguments] [message]")
 	return
