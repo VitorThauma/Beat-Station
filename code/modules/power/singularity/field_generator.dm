@@ -261,7 +261,7 @@ field_generator power level display
 			if(!G.active)
 				return 0
 			break
-	for(var/TC in T.contents)
+		for(var/TC in T.contents)
 			var/atom/A = TC
 			if(ismob(A))
 				continue
