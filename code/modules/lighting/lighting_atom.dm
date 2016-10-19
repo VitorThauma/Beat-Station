@@ -7,9 +7,12 @@
 	var/list/light_sources
 
 /atom/proc/set_light(l_range, l_power, l_color)
-	if(l_power != null) light_power = l_power
-	if(l_range != null) light_range = l_range
-	if(l_color != null) light_color = l_color
+	if(l_power != null)
+		light_power = l_power
+	if(l_range != null)
+		light_range = l_range
+	if(l_color != null)
+		light_color = l_color
 
 	update_light()
 
@@ -39,13 +42,14 @@
 	if(light_power && light_range)
 		update_light()
 
+	if (opacity && isturf(loc))
+		var/turf/T = loc
+		T.has_opaque_atom = TRUE // No need to recalculate it in this case, it's guaranteed to be on afterwards anyways.
+
 /atom/Destroy()
 	if(light)
 		light.destroy()
 		light = null
-	if(opacity && isturf(loc))
-		var/turf/T = loc
-		T.has_opaque_atom = TRUE // No need to recalculate it in this case, it's guaranteed to be on afterwards anyways.
 
 	. = ..()
 
@@ -53,9 +57,11 @@
 	var/turf/T = loc
 	if(opacity && istype(T))
 		T.reconsider_lights()
+
 	. = ..()
 
-/atom/movable/Move()
+
+/*atom/movable/Move()
 	var/turf/old_loc = loc
 	. = ..()
 
@@ -69,6 +75,8 @@
 
 	if(istype(new_loc) && opacity)
 		new_loc.reconsider_lights()
+*/
+
 
 /atom/proc/set_opacity(new_opacity)
 	var/old_opacity = opacity
@@ -77,14 +85,19 @@
 	if(old_opacity != new_opacity && istype(T))
 		T.reconsider_lights()
 
-/obj/item/equipped()
-	. = ..()
-	update_light()
 
-/obj/item/pickup()
+// This code makes the light be queued for update when it is moved.
+// Entered() should handle it, however Exited() can do it if it is being moved to nullspace (as there would be no Entered() call in that situation).
+/atom/Entered(var/atom/movable/Obj, var/atom/OldLoc) //Implemented here because forceMove() doesn't call Move()
 	. = ..()
-	update_light()
 
-/obj/item/dropped()
+	if (Obj && OldLoc != src)
+		for (var/datum/light_source/L in Obj.light_sources) // Cycle through the light sources on this atom and tell them to update.
+			L.source_atom.update_light()
+
+/atom/Exited(var/atom/movable/Obj, var/atom/newloc)
 	. = ..()
-	update_light()
+
+	if (!newloc && Obj && newloc != src) // Incase the atom is being moved to nullspace, we handle queuing for a lighting update here.
+		for (var/datum/light_source/L in Obj.light_sources) // Cycle through the light sources on this atom and tell them to update.
+			L.source_atom.update_light()

@@ -74,3 +74,17 @@
 		return null // Since this proc gets used in a for loop, null won't be looped though.
 
 	return corners
+
+/turf/proc/get_lumcount(var/minlum = 0, var/maxlum = 1)
+	if (!lighting_overlay)
+		return 0.5
+
+	var/totallums = 0
+	for (var/datum/lighting_corner/L in corners)
+		totallums += L.lum_r + L.lum_b + L.lum_g
+
+	totallums /= 12 // 4 corners, each with 3 channels, get the average.
+
+	totallums = (totallums - minlum) / (maxlum - minlum)
+
+	return CLAMP01(totallums)
