@@ -1,2 +1,0 @@
-// Species which cannot do ERP (use Forbidden Fruits and ass storage)
-var/global/list/erp_blacklist_species = list("Vox", "Vox Armalis", "Kidan", "Slime People", "Diona", "Machine", "Drask", "Wryn", "Plasmaman")

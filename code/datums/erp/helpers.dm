@@ -53,8 +53,14 @@
 	return 1
 // can fuck end
 
-/datum/forbidden_controller/proc/check_species(mob/living/carbon/human/who)
-	if(who.species.name in erp_blacklist_species)
+/datum/forbidden_controller/proc/check_species(mob/living/carbon/human/who, action)
+	if(action == VAGINAL && !who.species.genitals)
+		return 0
+	if(action == ANAL && !who.species.anus)
+		return 0
+	if(is_fuck(action) && !owner.species.genitals)
+		return 0
+	if(is_oral(action) && !who.species.genitals)
 		return 0
 	return 1
 

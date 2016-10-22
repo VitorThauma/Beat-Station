@@ -1,11 +1,28 @@
-// Forbidden Fruits
+/*
+ *
+ * FORBIDDEN FRUITS
+ *
+ */
+
 /mob/living/carbon/human/ui_interact(mob/living/carbon/human/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1)
-	if(!istype(user) || get_dist(user, src) > 1 || !erp_controller.check_species(src) || !erp_controller.check_species(user))
+	if(!istype(user) || get_dist(user, src) > 1)
 		return
 
 	var/data[0]
-	data["src_gender"] = (gender == MALE ? 1 : 0)
-	data["usr_gender"] = (user.gender == MALE ? 1 : 0)
+	data["src_gender"] = (gender == FEMALE ? 1 : 0)
+	data["usr_gender"] = (user.gender == FEMALE ? 1 : 0)
+
+	data["src_penis"] = has_penis()
+	data["usr_penis"] = user.has_penis()
+
+	data["src_vagina"] = has_vagina()
+	data["usr_vagina"] = user.has_vagina()
+
+	data["src_hands"] = has_hands()
+	data["usr_hands"] = user.has_hands()
+
+	data["src_anus"] = species.anus
+	data["usr_anus"] = user.species.anus
 
 	data["yourself"] = (src == user)
 
@@ -34,60 +51,59 @@
 	return ..()
 
 /mob/living/carbon/human/proc/process_erp_href(href_list, mob/living/carbon/human/user)
-	if(get_dist(user, src) <= 1 && user.stat != DEAD && user.stat != UNCONSCIOUS && !user.weakened && !user.stunned && !user.paralysis && erp_controller.check_species(src) && erp_controller.check_species(user) && istype(user))
+	if(get_dist(user, src) <= 1 && user.incapacitated() && erp_controller.check_species(src) && erp_controller.check_species(user) && istype(user))
 		if(user != src)
 			if(user.is_face_clean() && is_nude())
 				if(href_list["oral"])
 					switch(href_list["oral"])
 						if("penis")
-							if(gender == MALE && !erp_controller.fucking)
+							if(has_penis())
 								user.erp_controller.fucking(src, BLOWJOB)
 
 						else if("vagina")
-							if(gender == FEMALE)
+							if(has_vagina())
 								user.erp_controller.fucking(src, CUNNILINGUS)
 
-			if(user.is_nude() && get_dist(user, src) == 0)
+			if(user.is_nude() && get_dist(user, src) == 0 && user.has_penis())
 				if(href_list["fuck"])
 					switch(href_list["fuck"])
 						if("anus")
-							if(is_nude())
+							if(is_nude() && species.anus)
 								user.erp_controller.fucking(src, ANAL)
 						if("vagina")
-							if(gender == FEMALE && is_nude())
+							if(has_vagina() && is_nude())
 								user.erp_controller.fucking(src, VAGINAL)
 						if("mouth")
 							if(is_face_clean())
 								user.erp_controller.fucking(src, MOUTHFUCK)
+
+			if((user.is_nude() && user.has_vagina()) && (is_nude() && has_penis()) && get_dist(user, src) == 0)
+				if(href_list["mount"])
+					user.erp_controller.fucking(src, MOUNT)
+
+			if(user.has_hands() && is_nude())
+				if(href_list["finger"])
+					switch(href_list["finger"])
+						if("anus")
+							user.erp_controller.fucking(src, ASS_FINGERING)
+						if("vagina")
+							if(gender == FEMALE && species.genitals)
+								user.erp_controller.fucking(src, VAGINA_FINGERING)
 		else
 			if(user.is_nude() && href_list["masturbate"])
 				switch(href_list["masturbate"])
-					if("normal")
+					if("genitals")
 						user.erp_controller.masturbate(null)
 					if("anus")
 						user.erp_controller.masturbate(ANAL)
 
 
+/*
+ *
+ * ANAL STORAGE
+ *
+ */
 
-// Helper procs
-/mob/living/carbon/human/proc/is_nude()
-	return (!istype(w_uniform, /obj/item/clothing/under) && !istype(underpants, /obj/item/clothing/underwear/underpants))
-
-/mob/living/carbon/human/proc/is_face_clean()
-	if(!wear_mask)
-		return 1
-	if((wear_mask.flags & MASKCOVERSMOUTH) && !wear_mask.mask_adjusted)
-		return 0
-	if(!head)
-		return 1
-	if((head.flags & HEADCOVERSMOUTH))
-		return 0
-	return 1
-// Helper procs end
-
-
-
-// Anus insertion
 /mob/living/carbon/human/attackby(obj/item/I, mob/user, params)
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
@@ -97,7 +113,7 @@
 	..()
 
 /mob/living/carbon/human/proc/ass_storage(mob/living/carbon/human/H, obj/item/I = null)
-	if(species.name in erp_blacklist_species)
+	if(!species.anus)
 		return 0
 
 	if(!is_nude())
@@ -131,4 +147,39 @@
 			else
 				to_chat(H, "<span class='notice'>You remove everything from [your] anus.")
 	return 1
-// Anus insertion end
+
+
+/*
+ *
+ * HELPERS PROCS
+ *
+ */
+
+/mob/living/carbon/human/proc/is_nude()
+	return (!istype(w_uniform, /obj/item/clothing/under) && !istype(underpants, /obj/item/clothing/underwear/underpants))
+
+/mob/living/carbon/human/proc/is_face_clean()
+	if(!wear_mask)
+		return 1
+	if((wear_mask.flags & MASKCOVERSMOUTH) && !wear_mask.mask_adjusted)
+		return 0
+	if(!head)
+		return 1
+	if((head.flags & HEADCOVERSMOUTH))
+		return 0
+	return 1
+
+
+/mob/living/carbon/human/proc/has_penis()
+	return (species.genitals && gender == MALE)
+
+/mob/living/carbon/human/proc/has_vagina()
+	return (species.genitals && gender == FEMALE)
+
+/mob/living/carbon/human/proc/has_hands()
+	var/obj/item/organ/external/temp = organs_by_name["r_hand"]
+	var/hashands = (temp && temp.is_usable())
+	if (!hashands)
+		temp = H.organs_by_name["l_hand"]
+		hashands = (temp && temp.is_usable())
+	return hashands
