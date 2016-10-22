@@ -17,6 +17,8 @@
 	var/mob/living/carbon/human/lastreceived	// Last person you reveived something
 	var/datum/forbidden/action/lraction			// Last action you received by someone
 
+	var/canfuck = 1
+	var/erpcooldown
 
 /*
  * UI
@@ -241,21 +243,13 @@
  * Forbidden Controller
  */
 /mob/living/carbon/human/proc/fuck(mob/living/carbon/human/P, datum/forbidden/action/action)
-	if(!istype(P) || !istype(action))
+	if(!istype(P) || !istype(action) || !canfuck)
 		return 0
 
 	if(!action.conditions(src, P))
 		return 0
 
-	/*if(!click_check())
-		return 0*/
-
 	face_atom(P)
-
-	//P.time_check()
-
-	//click_time = world.time + 10
-	//P.timevar = world.time + 40
 
 	lfaction = action
 	lastfucked = P
@@ -263,13 +257,15 @@
 	var/begins = 0
 	if(P.lastreceived != src || P.lraction != action)
 		begins = 1
-		action.log(src, P)
+		action.logAction(src, P)
 
 	action.fuckText(src, P, begins)
 	action.doAction(src, P)
 
 	P.lastreceived = src
 	P.lraction = action
+
+	erpcooldown = world.time + 10;
 
 	return 1
 
@@ -301,7 +297,7 @@
 			if("anus")
 				visible_message("<span class='cum'>[src] cums into [P]'s ass!</span>")
 			if("mouth")
-				owner.visible_message("<span class='cum'>[src] cums into [P]'s mouth!</span>")
+				visible_message("<span class='cum'>[src] cums into [P]'s mouth!</span>")
 	else if(has_vagina())
 		visible_message("<span class='cum'>[src] cums!</span>")
 		var/obj/effect/decal/cleanable/sex/cum = new /obj/effect/decal/cleanable/sex/femjuice(loc)
@@ -310,7 +306,25 @@
 	else
 		visible_message("<span class='cum'>[src] cums!</span>")
 
+	add_logs(P, src, "came on")
 	pleasure = 0
+
+	druggy = 60
+	if(staminaloss > 100)
+		druggy = 300
+
+mob/living/carbon/human/proc/handle_lust()
+	pleasure -= 4
+	if(pleasure <= 0)
+		pleasure = 0
+		lastfucked = null
+		lfaction = null
+	if(pleasure == 0)
+		erpcooldown -= 1
+	if(world.time > erpcooldown)
+		canfuck = 1
+	else
+		canfuck = 0
 
 /mob/living/carbon/human/verb/interact()
 	set name = "Interact"

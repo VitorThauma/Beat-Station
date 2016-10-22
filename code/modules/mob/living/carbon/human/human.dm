@@ -16,9 +16,6 @@
 		dna = new /datum/dna(null)
 		// Species name is handled by set_species()
 
-	if(!erp_controller)
-		erp_controller = new /datum/forbidden_controller(src)
-
 	if(!swallow_controller)
 		swallow_controller = new /datum/vore_controller(src)
 

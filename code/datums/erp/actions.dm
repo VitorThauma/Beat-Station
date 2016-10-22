@@ -32,10 +32,10 @@
 	H.pleasure += HPleasure
 	P.pleasure += PPleasure
 
-	if(H.pleasure >= x)
+	if(H.pleasure >= MAX_PLEASURE)
 		H.cum(P, HHole ? HHole : "floor")
 
-	if(P.pleasure >= x)
+	if(P.pleasure >= MAX_PLEASURE)
 		P.cum(H, PHole ? PHole : "floor")
 
 /*
@@ -138,6 +138,9 @@
 	if(P.anal_virgin)
 		P.anal_virgin = 0
 	P.moan()
+
+	P.staminaloss += H.pleasure * 0.2
+
 	..()
 
 
@@ -175,6 +178,9 @@
 		new /obj/effect/decal/cleanable/blood(P.loc)
 		P.virgin = 0
 	P.moan()
+
+	P.staminaloss += H.pleasure * 0.2
+
 	..()
 
 
@@ -240,6 +246,9 @@
 		new /obj/effect/decal/cleanable/blood(P.loc)
 		H.virgin = 0
 	H.moan()
+
+	H.staminaloss += P.pleasure * 0.2
+
 	..()
 
 
