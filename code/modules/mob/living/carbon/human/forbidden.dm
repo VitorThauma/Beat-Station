@@ -86,50 +86,18 @@
 		ui.open()
 
 /mob/living/carbon/human/proc/process_erp_href(href_list, mob/living/carbon/human/user)
-	if(get_dist(user, src) <= 1 && user.incapacitated())
-		if(user != src)
-			if(user.is_face_clean() && is_nude())
-				if(href_list["oral"])
-					switch(href_list["oral"])
-						if("penis")
-							if(has_penis())
-								user.fuck(src, forbidden_actions["blowjob"])
+	if(user.incapacitated())
+		return 0
 
-						else if("vagina")
-							if(has_vagina())
-								user.fuck(src, forbidden_actions["cunnilingus"])
+	if(href_list["action"])
+		if(!(href_list["action"] in forbidden_actions))
+			return 0
 
-			if(user.is_nude() && get_dist(user, src) == 0 && user.has_penis())
-				if(href_list["fuck"])
-					switch(href_list["fuck"])
-						if("anus")
-							if(is_nude() && species.anus)
-								user.fuck(src, forbidden_actions["anal"])
-						if("vagina")
-							if(has_vagina() && is_nude())
-								user.fuck(src, forbidden_actions["vaginal"])
-						if("mouth")
-							if(is_face_clean())
-								user.fuck(src, forbidden_actions["mouthfuck"])
+		var/datum/forbidden/action/A = forbidden_actions[href_list["action"]]
+		if(!A.conditions)
+			return 0
 
-			if((user.is_nude() && user.has_vagina()) && (is_nude() && has_penis()) && get_dist(user, src) == 0)
-				if(href_list["mount"])
-					user.fuck(src, forbidden_actions["mount"])
-
-			if(user.has_hands() && is_nude())
-				if(href_list["finger"])
-					switch(href_list["finger"])
-						if("vagina")
-							if(has_vagina())
-								user.fuck(src, forbidden_actions["fingering"])
-
-		if(user.is_nude())
-			if(href_list["masturbate"])
-				switch(href_list["masturbate"])
-					if("genitals")
-						user.fuck(src, forbidden_actions["masturbation"])
-					if("anus")
-						user.fuck(src, forbidden_actions["analmasturbation"])
+		user.fuck(src, A)
 
 
 /*
