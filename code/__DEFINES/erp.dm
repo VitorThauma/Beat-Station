@@ -9,7 +9,7 @@
 #define MOUNT				32	// Mount in someone
 
 #define ASS_FINGERING 		64	// Fuck ass with fingers
-#define VAGINA_FINGERING	128	// Fuck ass with fingers
+#define VAGINA_FINGERING	128	// Fuck vagina with fingers
 
 
 // Values

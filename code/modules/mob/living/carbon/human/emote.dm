@@ -780,6 +780,21 @@
 					message = "<B>[src]</B> makes a very loud noise."
 					m_type = 2
 
+		if ("moan", "moans")
+			if (miming)
+				message = "<B>[src]</B> acts out a moan!"
+				m_type = 1
+			else
+				if (!muzzled)
+					message = "<B>[src]</B> moans!"
+					m_type = 2
+					if(gender == FEMALE)
+						playsound(src.loc, "sound/forbidden/erp/moan_f[rand(1, 7)].ogg", 70, 1, 0, pitch = get_age_pitch())
+
+				else
+					message = "<B>[src]</B> makes a very loud noise."
+					m_type = 2
+
 
 		if ("snap", "snaps")
 			if(prob(95))

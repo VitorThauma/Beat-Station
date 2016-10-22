@@ -12,9 +12,6 @@
 	var/HHole		// Used when who is giving the action cums
 	var/PHole		// Used when who is receiving the action cums
 
-/datum/forbidden/action/proc/playSound(turf/T)
-	return
-
 /datum/forbidden/action/proc/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(H.incapacitated())
 		return 0
@@ -26,8 +23,17 @@
 /datum/forbidden/action/proc/log(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	add_logs(P, H, "fucked")
 
-/datum/forbidden/action/proc/lose_virgin(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	return
+/datum/forbidden/action/proc/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	H.do_fucking_animation(P)
+
+	H.pleasure += HPleasure
+	P.pleasure += PPleasure
+
+	if(H.pleasure >= x)
+		H.cum(P, HHole ? HHole : "floor")
+
+	if(P.pleasure >= x)
+		P.cum(H, PHole ? PHole : "floor")
 
 /*
  *
@@ -48,9 +54,6 @@
 	HHole = "floor"
 	PHole = "floor"
 
-/datum/forbidden/action/oral/cunnilingus/playSound(turf/T)
-	return ..()
-
 /datum/forbidden/action/oral/cunnilingus/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	return ..()
 
@@ -63,6 +66,10 @@
 /datum/forbidden/action/oral/cunnilingus/log(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	add_logs(P, H, "gave a cunnilingus to")
 
+/datum/forbidden/action/oral/cunnilingus/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	P.moan()
+	..()
+
 
 // Blowjob
 /datum/forbidden/action/oral/blowjob
@@ -71,9 +78,6 @@
 
 	HHole = "floor"
 	PHole = "mouth"
-
-/datum/forbidden/action/oral/blowjob/playSound(turf/T)
-	return ..()
 
 /datum/forbidden/action/oral/blowjob/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	return ..()
@@ -87,6 +91,8 @@
 /datum/forbidden/action/oral/blowjob/log(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	add_logs(P, H, "gave a blowjob to")
 
+/datum/forbidden/action/oral/blowjob/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..()
 
 
 /*
@@ -98,11 +104,8 @@
 	HPleasure = 6	// How much pleasure who is giving the action receive
 	PPleasure = 6	// How much pleasure who is receiving the action receive
 
-	HHole = "ass"
+	HHole = "anus"
 	PHole = "floor"
-
-/datum/forbidden/action/fuck/anal/playSound(turf/T)
-	return ..()
 
 /datum/forbidden/action/fuck/anal/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	return ..()
@@ -119,9 +122,11 @@
 /datum/forbidden/action/fuck/anal/log(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	add_logs(P, H, "ass fucked")
 
-/datum/forbidden/action/fuck/anal/lose_virgin(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/fuck/anal/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(P.anal_virgin)
 		P.anal_virgin = 0
+	P.moan()
+	..()
 
 
 // Vaginal
@@ -131,9 +136,6 @@
 
 	HHole = "vagina"
 	PHole = "floor"
-
-/datum/forbidden/action/fuck/vaginal/playSound(turf/T)
-	return ..()
 
 /datum/forbidden/action/fuck/vaginal/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	return ..()
@@ -150,11 +152,13 @@
 /datum/forbidden/action/fuck/vaginal/log(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	add_logs(P, H, "fucked")
 
-/datum/forbidden/action/fuck/vaginal/lose_virgin(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/fuck/vaginal/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(P.virgin)
 		P.emote("scream")
 		new /obj/effect/decal/cleanable/blood(P.loc)
 		P.virgin = 0
+	P.moan()
+	..()
 
 
 // Mouthfuck
@@ -164,9 +168,6 @@
 
 	HHole = "mouth"
 	PHole = "floor"
-
-/datum/forbidden/action/fuck/mouth/playSound(turf/T)
-	return ..()
 
 /datum/forbidden/action/fuck/mouth/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	return ..()
@@ -180,14 +181,58 @@
 /datum/forbidden/action/fuck/mouth/log(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	add_logs(P, H, "mouth fucked")
 
-/*
-if(MOUNT)
-	erp_c.give_pleasure(5)
-	give_pleasure(5)
-if(ASS_FINGERING)
-	erp_c.give_pleasure(3.5)
-	give_pleasure(1)
-if(VAGINA_FINGERING)
-	erp_c.give_pleasure(3)
-	give_pleasure(2)
-*/
+/datum/forbidden/action/fuck/mouth/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..()
+
+
+// Mount
+/datum/forbidden/action/fuck/mount
+	HPleasure = 5	// How much pleasure who is giving the action receive
+	PPleasure = 5	// How much pleasure who is receiving the action receive
+
+	HHole = "floor"
+	PHole = "vagina"
+
+/datum/forbidden/action/fuck/mount/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return ..()
+
+/datum/forbidden/action/fuck/mount/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	if(begins)
+		H.visible_message("<span class='erp'><b>[H]</b> begins to mount on [P].</span>")
+	else
+		H.visible_message("<span class='erp'><b>[H]</b> mounts on [P].</span>")
+
+/datum/forbidden/action/fuck/mount/log(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	add_logs(P, H, "mounted on")
+
+/datum/forbidden/action/fuck/mount/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(H.virgin)
+		H.emote("scream")
+		new /obj/effect/decal/cleanable/blood(P.loc)
+		H.virgin = 0
+	H.moan()
+	..()
+
+
+// Vagina Fingering
+/datum/forbidden/action/fuck/fingering/vagina
+	HPleasure = 1	// How much pleasure who is giving the action receive
+	PPleasure = 3	// How much pleasure who is receiving the action receive
+
+	HHole = "floor"
+	PHole = "floor"
+
+/datum/forbidden/action/fuck/fingering/vagina/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return ..()
+
+/datum/forbidden/action/fuck/fingering/vagina/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	if(begins)
+		H.visible_message("<span class='erp'><b>[H]</b> begins to finger <b>[P]</b>.</span>")
+	else
+		H.visible_message("<span class='erp'><b>[H]</b> fingers <b>[P]</b>.</span>")
+
+/datum/forbidden/action/fuck/fingering/vagina/log(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	add_logs(P, H, "vagina fingered")
+
+/datum/forbidden/action/fuck/fingering/vagina/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..()

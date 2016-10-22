@@ -23,12 +23,6 @@
 	genitals = 1
 	anus = 1
 
-/datum/species/human/skrell
-	genitals = 0
-
 /datum/species/monkey
 	genitals = 1
 	anus = 1
-
-/datum/species/monkey/skrell
-	genitals = 0
