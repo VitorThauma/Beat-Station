@@ -97,7 +97,7 @@
 
 			if((user.is_nude() && user.has_vagina()) && (is_nude() && has_penis()) && get_dist(user, src) == 0)
 				if(href_list["mount"])
-					user.erp_controller.fucking(src, forbidden_actions["mount"])
+					user.fuck(src, forbidden_actions["mount"])
 
 			if(user.has_hands() && is_nude())
 				if(href_list["finger"])
@@ -240,7 +240,7 @@
 /*
  * Forbidden Controller
  */
-/mob/living/carbon/human/proc/fuck(mob/living/carbon/human/P, /datum/forbidden/action/action)
+/mob/living/carbon/human/proc/fuck(mob/living/carbon/human/P, datum/forbidden/action/action)
 	if(!istype(P) || !istype(action))
 		return 0
 
@@ -252,10 +252,10 @@
 
 	face_atom(P)
 
-	P.erp_controller.time_check()
+	//P.time_check()
 
 	//click_time = world.time + 10
-	P.erp_controller.timevar = world.time + 40
+	//P.timevar = world.time + 40
 
 	lfaction = action
 	lastfucked = P
@@ -288,9 +288,9 @@
 		return 0
 
 	var/pleasure_message = pick("... I'M FEELING SO GOOD! ...",  "... It's just INCREDIBLE! ...", "... MORE AND MORE AND MORE! ...")
-	to_chat(owner, "<span class='cum'>[pleasure_message]</span>")
+	to_chat(src, "<span class='cum'>[pleasure_message]</span>")
 
-	if(has_penis)
+	if(has_penis())
 		switch(hole)
 			if("floor")
 				visible_message("<span class='cum'>[src] cums on the floor!</span>")
@@ -302,7 +302,7 @@
 				visible_message("<span class='cum'>[src] cums into [P]'s ass!</span>")
 			if("mouth")
 				owner.visible_message("<span class='cum'>[src] cums into [P]'s mouth!</span>")
-	else if(has_vagina)
+	else if(has_vagina())
 		visible_message("<span class='cum'>[src] cums!</span>")
 		var/obj/effect/decal/cleanable/sex/cum = new /obj/effect/decal/cleanable/sex/femjuice(loc)
 		cum.add_blood_list(src)
