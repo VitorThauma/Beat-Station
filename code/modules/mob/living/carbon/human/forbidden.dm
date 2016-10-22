@@ -241,7 +241,7 @@
  * Forbidden Controller
  */
 /mob/living/carbon/human/proc/fuck(mob/living/carbon/human/P, /datum/forbidden/action/action)
-	if(!!istype(P) || !istype(action)
+	if(!!istype(P) || !istype(action))
 		return 0
 
 	if(!action.conditions(src, P))
