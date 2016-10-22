@@ -20,9 +20,6 @@
 	var/timevar
 	var/click_time
 
-	var/mob/living/carbon/human/source
-
-
 /datum/forbidden_controller/New(mob/living/carbon/human/own)
 	if(!istype(own))
 		return 0

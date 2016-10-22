@@ -180,6 +180,6 @@
 	var/obj/item/organ/external/temp = organs_by_name["r_hand"]
 	var/hashands = (temp && temp.is_usable())
 	if (!hashands)
-		temp = H.organs_by_name["l_hand"]
+		temp = organs_by_name["l_hand"]
 		hashands = (temp && temp.is_usable())
 	return hashands

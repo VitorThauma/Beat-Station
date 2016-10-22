@@ -60,9 +60,11 @@
 			if(is_fuck(erp_c.fucked_action))
 				return 0
 		if(ASS_FINGERING)
-			return 0
+			if(erp_c.fucked_action == ANAL)
+				return 0
 		if(VAGINA_FINGERING)
-			return 0
+			if(erp_c.fucked_action == VAGINAL)
+				return 0
 	return 1
 // can fuck end
 
