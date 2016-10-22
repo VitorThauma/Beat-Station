@@ -1,0 +1,1 @@
+var/global/list/forbidden_actions = list() // stores /datum/forbidden/action indexed by name

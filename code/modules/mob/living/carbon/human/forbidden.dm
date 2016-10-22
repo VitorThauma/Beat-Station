@@ -69,51 +69,50 @@
 		ui.open()
 
 /mob/living/carbon/human/proc/process_erp_href(href_list, mob/living/carbon/human/user)
-	if(get_dist(user, src) <= 1 && user.incapacitated() && erp_controller.check_species(src) && erp_controller.check_species(user) && istype(user))
+	if(get_dist(user, src) <= 1 && user.incapacitated())
 		if(user != src)
 			if(user.is_face_clean() && is_nude())
 				if(href_list["oral"])
 					switch(href_list["oral"])
 						if("penis")
 							if(has_penis())
-								user.erp_controller.fucking(src, BLOWJOB)
+								user.fuck(src, forbidden_actions["blowjob"])
 
 						else if("vagina")
 							if(has_vagina())
-								user.erp_controller.fucking(src, CUNNILINGUS)
+								user.fuck(src, forbidden_actions["cunnilingus"])
 
 			if(user.is_nude() && get_dist(user, src) == 0 && user.has_penis())
 				if(href_list["fuck"])
 					switch(href_list["fuck"])
 						if("anus")
 							if(is_nude() && species.anus)
-								user.erp_controller.fucking(src, ANAL)
+								user.fuck(src, forbidden_actions["anal"])
 						if("vagina")
 							if(has_vagina() && is_nude())
-								user.erp_controller.fucking(src, VAGINAL)
+								user.fuck(src, forbidden_actions["vaginal"])
 						if("mouth")
 							if(is_face_clean())
-								user.erp_controller.fucking(src, MOUTHFUCK)
+								user.fuck(src, forbidden_actions["mouthfuck"])
 
 			if((user.is_nude() && user.has_vagina()) && (is_nude() && has_penis()) && get_dist(user, src) == 0)
 				if(href_list["mount"])
-					user.erp_controller.fucking(src, MOUNT)
+					user.erp_controller.fucking(src, forbidden_actions["mount"])
 
 			if(user.has_hands() && is_nude())
 				if(href_list["finger"])
 					switch(href_list["finger"])
-						if("anus")
-							user.erp_controller.fucking(src, ASS_FINGERING)
 						if("vagina")
-							if(gender == FEMALE && species.genitals)
-								user.erp_controller.fucking(src, VAGINA_FINGERING)
-		else
-			if(user.is_nude() && href_list["masturbate"])
+							if(has_vagina())
+								user.fuck(src, forbidden_actions["fingering"])
+
+		if(user.is_nude())
+			if(href_list["masturbate"])
 				switch(href_list["masturbate"])
 					if("genitals")
-						user.erp_controller.masturbate(null)
+						user.fuck(src, forbidden_actions["masturbation"])
 					if("anus")
-						user.erp_controller.masturbate(ANAL)
+						user.fuck(src, forbidden_actions["analmasturbation"])
 
 
 /*
@@ -242,18 +241,20 @@
  * Forbidden Controller
  */
 /mob/living/carbon/human/proc/fuck(mob/living/carbon/human/P, /datum/forbidden/action/action)
-
-	if(!istype(P) || !action.conditions(src, P))
+	if(!!istype(P) || !istype(action)
 		return 0
 
-	if(!click_check())
+	if(!action.conditions(src, P))
 		return 0
 
-	owner.face_atom(P)
+	/*if(!click_check())
+		return 0*/
+
+	face_atom(P)
 
 	P.erp_controller.time_check()
 
-	click_time = world.time + 10
+	//click_time = world.time + 10
 	P.erp_controller.timevar = world.time + 40
 
 	lfaction = action

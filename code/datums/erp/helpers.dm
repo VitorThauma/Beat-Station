@@ -1,3 +1,4 @@
+/*
 /mob/living/carbon/human/Move()
 	. = ..()
 	if(erp_controller.fucking && get_dist(erp_controller.fucking, src) > 1)
@@ -12,3 +13,4 @@
 
 		erp_controller.fucked = null
 		erp_controller.fucked_action = null
+*/
