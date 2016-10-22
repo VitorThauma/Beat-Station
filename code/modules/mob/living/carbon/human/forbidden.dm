@@ -19,6 +19,7 @@
 
 	var/canfuck = 1
 	var/erpcooldown
+	var/clean_CD
 
 /*
  * UI
@@ -265,7 +266,9 @@
 	P.lastreceived = src
 	P.lraction = action
 
-	erpcooldown = world.time + 10;
+	erpcooldown = world.time + 10
+	clean_CD = world.time + 40
+	P.clean_CD = world.time + 40
 
 	return 1
 
@@ -317,14 +320,24 @@ mob/living/carbon/human/proc/handle_lust()
 	pleasure -= 4
 	if(pleasure <= 0)
 		pleasure = 0
+		erpcooldown = 0
+		if(lastfucked && lastfucked.lastreceived == src)
+			lastfucked.lastreceived = null
+			lastfucked.lraction = null
 		lastfucked = null
 		lfaction = null
-	if(pleasure == 0)
-		erpcooldown -= 1
+
 	if(world.time > erpcooldown)
 		canfuck = 1
 	else
 		canfuck = 0
+
+	if(world.time > clean_CD)
+		if(lastfucked && lastfucked.lastreceived == src)
+			lastfucked.lastreceived = null
+			lastfucked.lraction = null
+		lastfucked = null
+		lfaction = null
 
 /mob/living/carbon/human/verb/interact()
 	set name = "Interact"
@@ -335,28 +348,4 @@ mob/living/carbon/human/proc/handle_lust()
 	if(usr.stat == 1 || usr.restrained() || !isliving(usr))
 		return
 
-/*
-	if(!click_check())
-		return 0
-*/
-
 	ui_interact(usr)
-
-/*
-	var/message = ""
-	if(action == ANAL)
-		if(fucked_action == ANAL)
-			return 0
-		message = "plays with [owner.gender == MALE ? "his" : "her"] anus."
-	else
-		if(is_fuck(fucking_action))
-			return 0
-		if(is_oral(fucked_action))
-			return 0
-		if(fucking_action == VAGINAL)
-			return 0
-		message = "masturbates."
-	owner.visible_message("<span class ='erp'><b>[owner]</b> [message]</span>")
-	give_pleasure(3)
-	click_time = world.time + 10
-*/
