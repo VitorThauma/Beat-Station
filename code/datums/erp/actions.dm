@@ -32,14 +32,18 @@
 /datum/forbidden/action/proc/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	H.do_fucking_animation(P)
 
-	H.pleasure += HPleasure
-	P.pleasure += PPleasure
+	if(P != H)
+		H.pleasure += HPleasure
+		P.pleasure += PPleasure
 
-	if(H.pleasure >= MAX_PLEASURE)
-		H.cum(P, HHole ? HHole : "floor")
-
-	if(P.pleasure >= MAX_PLEASURE)
-		P.cum(H, PHole ? PHole : "floor")
+		if(H.pleasure >= MAX_PLEASURE)
+			H.cum(P, HHole ? HHole : "floor")
+		if(P.pleasure >= MAX_PLEASURE)
+			P.cum(H, PHole ? PHole : "floor")
+	else
+		P.pleasure += PPleasure
+		if(P.pleasure >= MAX_PLEASURE)
+			P.cum(H, PHole ? PHole : "floor")
 
 /*
  *
@@ -290,6 +294,9 @@
 		return 0
 	if(H == P)
 		return 0
+	if(!P.lying)
+		to_chat(H, "<span class='warning'>[H] needs to be lying to do that!</span>")
+		return 0
 	return ..()
 
 /datum/forbidden/action/vagina/mount/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
@@ -317,30 +324,104 @@
 /datum/forbidden/action/fingering/vagina
 	name = "fingering"
 	HPleasure = 1	// How much pleasure who is giving the action receive
-	PPleasure = 3	// How much pleasure who is receiving the action receive
+	PPleasure = 2	// How much pleasure who is receiving the action receive
 
 	HHole = "floor"
 	PHole = "floor"
 
 /datum/forbidden/action/fingering/vagina/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	return "Finger her vagina"
+	return "Finger [H == P ? "your" : "her"] vagina"
 
 /datum/forbidden/action/fingering/vagina/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	if(!P.has_vagina())
+	if(!P.has_vagina() || !P.is_nude())
 		return 0
-	if(!P.lying)
-		to_chat(H, "<span class='warning'>[H] needs to be lying to do that!</span>")
+	if(!H.has_hands())
 		return 0
 	return ..()
 
 /datum/forbidden/action/fingering/vagina/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	if(begins)
-		H.visible_message("<span class='erp'><b>[H]</b> begins to finger <b>[P]</b>.</span>")
+	if(H != P)
+		if(begins)
+			H.visible_message("<span class='erp'><b>[H]</b> begins to finger <b>[P]</b>.</span>")
+		else
+			H.visible_message("<span class='erp'><b>[H]</b> fingers <b>[P]</b>.</span>")
 	else
-		H.visible_message("<span class='erp'><b>[H]</b> fingers <b>[P]</b>.</span>")
+		H.visible_message("<span class='erp'><b>[H]</b> fingers her vagina.</span>")
 
 /datum/forbidden/action/fingering/vagina/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	add_logs(P, H, "vagina fingered")
 
 /datum/forbidden/action/fingering/vagina/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..()
+
+
+// Ass Fingering
+/datum/forbidden/action/fingering/anus
+	name = "analfingering"
+	HPleasure = 1	// How much pleasure who is giving the action receive
+	PPleasure = 2	// How much pleasure who is receiving the action receive
+
+	HHole = "floor"
+	PHole = "floor"
+
+/datum/forbidden/action/fingering/anus/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return "Finger [H == P ? "your" : P.gender == FEMALE ? "her" : "his"] anus"
+
+/datum/forbidden/action/fingering/anus/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(!P.species.anus || !P.is_nude())
+		return 0
+	if(!H.has_hands())
+		return 0
+	return ..()
+
+/datum/forbidden/action/fingering/anus/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	if(H != P)
+		if(begins)
+			H.visible_message("<span class='erp'><b>[H]</b> begins to play with [P]'s anus.</span>")
+		else
+			H.visible_message("<span class='erp'><b>[H]</b> plays with [P]'s anus.</span>")
+	else
+		H.visible_message("<span class='erp'><b>[H]</b> plays with [H.gender == FEMALE ? "her" : "his"] anus.</span>")
+
+/datum/forbidden/action/fingering/anus/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	add_logs(P, H, "ass fingered")
+
+/datum/forbidden/action/fingering/anus/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..()
+
+
+// Handjob
+/datum/forbidden/action/handjob
+	name = "handjob"
+	HPleasure = 1	// How much pleasure who is giving the action receive
+	PPleasure = 2	// How much pleasure who is receiving the action receive
+
+	HHole = "floor"
+	PHole = "floor"
+
+/datum/forbidden/action/handjob/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return "[H == P ? "Masturbate your penis" : "Give him a handjob"]"
+
+/datum/forbidden/action/handjob/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(isfuck(P.lfaction))
+		return 0
+	if(!P.has_penis() || !P.is_nude())
+		return 0
+	if(!H.has_hands())
+		return 0
+	return ..()
+
+/datum/forbidden/action/handjob/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	if(H != P)
+		if(begins)
+			H.visible_message("<span class='erp'><b>[H]</b> begins to give [P] a handjob.</span>")
+		else
+			H.visible_message("<span class='erp'><b>[H]</b> gives [P] a handjob.</span>")
+	else
+		H.visible_message("<span class='erp'><b>[H]</b> masturbates.</span>")
+
+/datum/forbidden/action/handjob/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	add_logs(P, H, "handjob")
+
+/datum/forbidden/action/handjob/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	..()

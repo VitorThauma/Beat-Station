@@ -94,7 +94,7 @@
 			return 0
 
 		var/datum/forbidden/action/A = forbidden_actions[href_list["action"]]
-		if(!A.conditions)
+		if(!A.conditions())
 			return 0
 
 		user.fuck(src, A)
