@@ -274,7 +274,6 @@
 #include "code\datums\diseases\advance\symptoms\weight.dm"
 #include "code\datums\diseases\advance\symptoms\youth.dm"
 #include "code\datums\erp\actions.dm"
-#include "code\datums\erp\ass_storage.dm"
 #include "code\datums\erp\forbidden_controller.dm"
 #include "code\datums\erp\helpers.dm"
 #include "code\datums\erp\species.dm"
