@@ -108,7 +108,7 @@
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(H.a_intent == I_GRAB && H.zone_sel && H.zone_sel.selecting == "groin")
-			if(src.ass_storage(H, I))
+			if(ass_storage(H, I))
 				return 1
 	..()
 
