@@ -329,7 +329,7 @@
 	if(!P.has_vagina())
 		return 0
 	if(!P.lying)
-		to_chat(H, "<span class='warning'>[H] needs to be lying to do that!</span>"
+		to_chat(H, "<span class='warning'>[H] needs to be lying to do that!</span>")
 		return 0
 	return ..()
 
