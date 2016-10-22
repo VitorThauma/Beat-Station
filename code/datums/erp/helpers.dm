@@ -19,6 +19,12 @@
 			return "VAGINAL"
 		if(MOUTHFUCK)
 			return "MOUTHFUCK"
+		if(MOUNT)
+			return "MOUNT"
+		if(ASS_FINGERING)
+			return "ASS_FINGERING"
+		if(VAGINA_FINGERING)
+			return "VAGINA_FINGERING"
 //to string end
 
 // can fuck
@@ -45,11 +51,18 @@
 			if(is_fuck(erp_c.fucking_action) && erp_c.fucked != owner)
 				return 0
 		if(VAGINAL)
-			if(erp_c.fucked_action == CUNNILINGUS && erp_c.fucked != owner)
+			if((erp_c.fucked_action == CUNNILINGUS && erp_c.fucked != owner) || (erp_c.fucking_action == MOUNT))
 				return 0
 		if(MOUTHFUCK)
 			if(is_oral(erp_c.fucking_action) && erp_c.fucking != owner)
 				return 0
+		if(MOUNT)
+			if(is_fuck(erp_c.fucked_action))
+				return 0
+		if(ASS_FINGERING)
+			return 0
+		if(VAGINA_FINGERING)
+			return 0
 	return 1
 // can fuck end
 

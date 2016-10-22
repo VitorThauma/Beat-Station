@@ -51,6 +51,15 @@
 			if(MOUTHFUCK)
 				erp_c.give_pleasure(2)
 				give_pleasure(5)
+			if(MOUNT)
+				erp_c.give_pleasure(5)
+				give_pleasure(5)
+			if(ASS_FINGERING)
+				erp_c.give_pleasure(3.5)
+				give_pleasure(1)
+			if(VAGINA_FINGERING)
+				erp_c.give_pleasure(3)
+				give_pleasure(2)
 	else if(base)
 		pleasure += (base + rand(-1, 3))
 
@@ -96,7 +105,7 @@
 	who.erp_controller.time_check()
 
 	click_time = world.time + 10
-	who.erp_controller.timevar = world.time + 100
+	who.erp_controller.timevar = world.time + 40
 
 	fucking_action = action
 	fucking = who
