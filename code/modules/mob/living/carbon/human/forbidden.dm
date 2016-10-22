@@ -36,33 +36,47 @@
 	if(!istype(user) || get_dist(user, src) > 1)
 		return
 
+	var/list/penis_actions = list()
+	var/list/vagina_actions = list()
+	var/list/mouth_actions = list()
+	var/list/misc_actions = list()
+
 	var/data[0]
-	data["src_gender"] = (gender == FEMALE ? 1 : 0)
-	data["usr_gender"] = (user.gender == FEMALE ? 1 : 0)
 
-	data["src_penis"] = has_penis()
-	data["usr_penis"] = user.has_penis()
+	for(var/datum/forbidden/action/A in forbidden_actions)
+		if(!A.conditions(user, src))
+			continue
 
-	data["src_vagina"] = has_vagina()
-	data["usr_vagina"] = user.has_vagina()
+		if(istype(A, /datum/forbidden/action/oral))
+			mouth_actions.Add(list(list(\
+				"action_button" = A.actionButton(user, src), \
+				"name" = A.name)))
+		else if(istype(A, /datum/forbidden/action/fuck))
+			penis_actions.Add(list(list(\
+				"action_button" = A.actionButton(user, src), \
+				"name" = A.name)))
+		else if(istype(A, /datum/forbidden/action/vagina))
+			vagina_actions.Add(list(list(\
+				"action_button" = A.actionButton(user, src), \
+				"name" = A.name)))
+		else
+			misc_actions.Add(list(list(\
+				"action_button" = A.actionButton(user, src), \
+				"name" = A.name)))
 
-	data["src_hands"] = has_hands()
-	data["usr_hands"] = user.has_hands()
+	data["penis_list"] = penis_actions
+	data["penis_len"] = penis_actions.len
 
-	data["src_anus"] = species.anus
-	data["usr_anus"] = user.species.anus
+	data["vagina_list"] = vagina_actions
+	data["vagina_len"] = vagina_actions.len
 
-	data["yourself"] = (src == user)
+	data["mouth_list"] = mouth_actions
+	data["mouth_len"] = mouth_actions.len
+
+	data["misc_list"] = misc_actions
+	data["misc_len"] = misc_actions.len
 
 	data["src_name"] = "[src]"
-	data["dist"] = get_dist(user, src)
-
-	data["src_nude"] = is_nude()
-	data["usr_nude"] = user.is_nude()
-
-	data["src_face"] = is_face_clean()
-	data["usr_face"] = user.is_face_clean()
-
 	data["icon"] = (gender == user.gender ? gender == MALE ? "mars-double" : "venus-double" : "venus-mars")
 
 	ui = nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)

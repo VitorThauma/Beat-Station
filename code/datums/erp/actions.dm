@@ -13,6 +13,9 @@
 	var/HHole		// Used when who is giving the action cums
 	var/PHole		// Used when who is receiving the action cums
 
+/datum/forbidden/action/proc/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return
+
 /datum/forbidden/action/proc/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(H.incapacitated())
 		return 0
@@ -49,6 +52,11 @@
  * ORAL ACTIONS
  */
 
+/datum/forbidden/action/oral/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(H == P)
+		return 0
+	return ..()
+
 // Cunnilingus
 /datum/forbidden/action/oral/cunnilingus
 	name = "cunnilingus"
@@ -58,7 +66,14 @@
 	HHole = "floor"
 	PHole = "floor"
 
+/datum/forbidden/action/oral/cunnilingus/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return "Lick her vagina"
+
 /datum/forbidden/action/oral/cunnilingus/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(!H.is_face_clean())
+		return 0
+	if(!P.has_vagina() || !P.is_nude())
+		return 0
 	return ..()
 
 /datum/forbidden/action/oral/cunnilingus/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
@@ -84,8 +99,15 @@
 	HHole = "floor"
 	PHole = "mouth"
 
+/datum/forbidden/action/oral/blowjob/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return "Give him a blowjob"
+
 /datum/forbidden/action/oral/blowjob/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(isfuck(P.lfaction))
+		return 0
+	if(!H.is_face_clean())
+		return 0
+	if(!P.has_penis() || !P.is_nude())
 		return 0
 	return ..()
 
@@ -106,6 +128,11 @@
  * FUCK ACTIONS
  */
 
+/datum/forbidden/action/fuck/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(H == P)
+		return 0
+	return ..()
+
 // Anal
 /datum/forbidden/action/fuck/anal
 	name = "anal"
@@ -115,10 +142,17 @@
 	HHole = "anus"
 	PHole = "floor"
 
+/datum/forbidden/action/fuck/anal/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return "Fuck [P.gender == FEMALE ? "her" : "his"] anus"
+
 /datum/forbidden/action/fuck/anal/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(H.loc != P.loc)
 		return 0
 	if(P.lastreceived != H && istype(P.lraction, type))
+		return 0
+	if(!P.species.anus || !H.has_penis())
+		return 0
+	if(!H.is_nude() || P.is_nude())
 		return 0
 	return ..()
 
@@ -153,10 +187,17 @@
 	HHole = "vagina"
 	PHole = "floor"
 
+/datum/forbidden/action/fuck/vaginal/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return "Fuck her vagina"
+
 /datum/forbidden/action/fuck/vaginal/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(H.loc != P.loc)
 		return 0
 	if(P.lastreceived != H && istype(P.lraction, type))
+		return 0
+	if(!P.has_vagina() || !H.has_penis())
+		return 0
+	if(!H.is_nude() || P.is_nude())
 		return 0
 	return ..()
 
@@ -193,10 +234,17 @@
 	HHole = "mouth"
 	PHole = "floor"
 
+/datum/forbidden/action/fuck/mouth/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return "Fuck [P.gender == FEMALE ? "her" : "his"] mouth"
+
 /datum/forbidden/action/fuck/mouth/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(H.loc != P.loc)
 		return 0
 	if(P.lastreceived != H && istype(P.lraction, type))
+		return 0
+	if(!P.is_face_clean())
+		return 0
+	if(!H.has_penis() || !H.is_nude())
 		return 0
 	return ..()
 
@@ -213,8 +261,12 @@
 	..()
 
 
+/*
+ * MISC ACTIONS
+ */
+
 // Mount
-/datum/forbidden/action/fuck/mount
+/datum/forbidden/action/vagina/mount
 	name = "mount"
 	HPleasure = 5	// How much pleasure who is giving the action receive
 	PPleasure = 5	// How much pleasure who is receiving the action receive
@@ -222,25 +274,34 @@
 	HHole = "floor"
 	PHole = "vagina"
 
-/datum/forbidden/action/fuck/mount/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/vagina/mount/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return "Mount on him"
+
+/datum/forbidden/action/vagina/mount/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(H.loc != P.loc)
 		return 0
 	if(P.lastreceived != H && istype(P.lraction, type))
 		return 0
 	if(istype(P.lfaction, /datum/forbidden/action/fuck/vaginal))
 		return 0
+	if(!P.has_penis() || !H.has_vagina())
+		return 0
+	if(!H.is_nude() || P.is_nude())
+		return 0
+	if(H == P)
+		return 0
 	return ..()
 
-/datum/forbidden/action/fuck/mount/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+/datum/forbidden/action/vagina/mount/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	if(begins)
 		H.visible_message("<span class='erp'><b>[H]</b> begins to mount on [P].</span>")
 	else
 		H.visible_message("<span class='erp'><b>[H]</b> mounts on [P].</span>")
 
-/datum/forbidden/action/fuck/mount/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+/datum/forbidden/action/vagina/mount/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	add_logs(P, H, "mounted on")
 
-/datum/forbidden/action/fuck/mount/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/vagina/mount/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(H.virgin)
 		H.emote("scream")
 		new /obj/effect/decal/cleanable/blood(P.loc)
@@ -261,7 +322,15 @@
 	HHole = "floor"
 	PHole = "floor"
 
+/datum/forbidden/action/fingering/vagina/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	return "Finger her vagina"
+
 /datum/forbidden/action/fingering/vagina/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(!P.has_vagina())
+		return 0
+	if(!P.lying)
+		to_chat(H, "<span class='warning'>[H] needs to be lying to do that!</span>"
+		return 0
 	return ..()
 
 /datum/forbidden/action/fingering/vagina/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
