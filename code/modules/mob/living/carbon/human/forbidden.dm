@@ -4,6 +4,13 @@
  *
  */
 
+/mob/living/carbon/human
+	var/virgin
+	var/anal_virgin
+
+	var/penis_size
+
+
 /mob/living/carbon/human/ui_interact(mob/living/carbon/human/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1)
 	if(!istype(user) || get_dist(user, src) > 1)
 		return

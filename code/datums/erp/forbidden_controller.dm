@@ -2,20 +2,13 @@
 	var/mob/living/carbon/human/owner
 	var/pleasure = 0
 
-	var/virgin = 1
-	var/anal_virgin = 1
+	var/mob/living/carbon/human/lastfucked		// Last person you did something
+	var/datum/forbidden/action/lfaction			// Last action you did to someone
 
-	var/penis_size = 0
-
-	var/mob/living/carbon/human/fucked
-	var/mob/living/carbon/human/fucking
-
-	var/mob/living/carbon/human/fucking_list[]
+	var/mob/living/carbon/human/lastreceived	// Last person you reveived something
+	var/datum/forbidden/action/lraction			// Last action you received by someone
 
 	var/list/transa_log = list()
-
-	var/fucking_action = "none"
-	var/fucked_action = "none"
 
 	var/timevar
 	var/click_time
@@ -24,63 +17,16 @@
 	if(!istype(own))
 		return 0
 	owner = own
-	if(owner.gender == MALE)
-		penis_size = round(rand(5, 25))
 
 
-/datum/forbidden_controller/proc/give_pleasure(base = null, f_action = null, mob/living/carbon/human/give_to = null)
-
-	if(!base && f_action && give_to)
-		var/datum/forbidden_controller/erp_c = give_to.erp_controller
-		switch(f_action)
-			if(CUNNILINGUS)
-				erp_c.give_pleasure(4)
-				give_pleasure(3)
-			if(BLOWJOB)
-				erp_c.give_pleasure(5)
-				give_pleasure(2)
-			if(ANAL)
-				erp_c.give_pleasure(6)
-				give_pleasure(6)
-			if(VAGINAL)
-				erp_c.give_pleasure(5)
-				give_pleasure(5)
-			if(MOUTHFUCK)
-				erp_c.give_pleasure(2)
-				give_pleasure(5)
-			if(MOUNT)
-				erp_c.give_pleasure(5)
-				give_pleasure(5)
-			if(ASS_FINGERING)
-				erp_c.give_pleasure(3.5)
-				give_pleasure(1)
-			if(VAGINA_FINGERING)
-				erp_c.give_pleasure(3)
-				give_pleasure(2)
+/datum/forbidden_controller/proc/give_pleasure(datum/forbidden/action/action)
 	else if(base)
 		pleasure += (base + rand(-1, 3))
 
 	if(pleasure >= MAX_PLEASURE)
 		cum()
 
-/datum/forbidden_controller/proc/fucked(mob/living/carbon/human/by, action)
-	fucked_action = action
-	fucked = by
-
-	if(is_fuck(action) && fucking == by)
-		fucking = null
-		fucking_action = null
-
-	// Lose virginity
-	if(virgin && action == VAGINAL && owner.gender == FEMALE)
-		if(owner.stat != DEAD)
-			owner.emote("scream")
-		new /obj/effect/decal/cleanable/blood(owner.loc)
-		virgin = 0
-
-	if(anal_virgin && action == ANAL)
-		anal_virgin = 0
-
+/*
 	if(owner.stat != DEAD)
 		// Pleasure messages
 		if(pleasure >= 70 && prob(15) && owner.gender == FEMALE)
@@ -88,44 +34,39 @@
 
 		if(pleasure >= 30 && prob(12))
 			owner.visible_message("<span class='erp'><b>[owner]</b> [owner.gender == FEMALE ? pick("moans in pleasure", "moans") : "moans"].</span>")
+*/
 
-/datum/forbidden_controller/proc/fucking(mob/living/carbon/human/who, action, auto_pleasure = 1)
+/datum/forbidden_controller/proc/fucking(mob/living/carbon/human/P, /datum/forbidden/action/action, auto_pleasure = 1)
 
-	if(!istype(who) || !can_fuck(who, action))
+	if(!istype(P) || !action.conditions(owner, P))
 		return 0
 
 	if(!click_check())
 		return 0
 
-	owner.face_atom(who)
+	owner.face_atom(P)
 
-	who.erp_controller.time_check()
+	P.erp_controller.time_check()
 
 	click_time = world.time + 10
-	who.erp_controller.timevar = world.time + 40
+	P.erp_controller.timevar = world.time + 40
 
-	fucking_action = action
-	fucking = who
+	lfaction = action
+	lastfucked = P
 
-	if(owner in who.erp_controller.fucking_list)
-		fucking_text(action, who)
-	else
-		begins_text(action, who)
-		who.erp_controller.fucking_list.Add(owner)
+	var/begins = 0
+	if(owner in P.erp_controller.fucking_list)
+		begins = 1
+		action.log(owner, P)
 
-		var/log_text = "<span class='warning'>[owner] begins to fuck [who] - Type</span>"
-		transa_log[log_text] = action_string(action)
-		who.erp_controller.transa_log[log_text] = action_string(action)
+	action.fuckText(owner, P, begins)
+	action.lose_virgin(owner, P)
 
-	who.erp_controller.fucked(owner, action)
+	P.erp_controller.lastreceived = owner
+	P.erp_controller.lraction = action
 
 	if(auto_pleasure)
-		give_pleasure(f_action = action, give_to = who)
-
-	if(is_fuck(action))
-		fucked = null
-		fucked_action = null
-		fucking_list = new()
+		give_pleasure(action)
 
 	return 1
 
