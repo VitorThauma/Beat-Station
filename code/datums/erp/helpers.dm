@@ -1,32 +1,3 @@
-// is_helpers
-/datum/forbidden_controller/proc/is_oral(action)
-	return (action == CUNNILINGUS || action == BLOWJOB)
-
-/datum/forbidden_controller/proc/is_fuck(action)
-	return (action == ANAL || action == VAGINAL || action == MOUTHFUCK)
-// is helpers end
-
-//to string
-/datum/forbidden_controller/proc/action_string(action)
-	switch(action)
-		if(CUNNILINGUS)
-			return "CUNNILINGUS"
-		if(BLOWJOB)
-			return "BLOWJOB"
-		if(ANAL)
-			return "ANAL"
-		if(VAGINAL)
-			return "VAGINAL"
-		if(MOUTHFUCK)
-			return "MOUTHFUCK"
-		if(MOUNT)
-			return "MOUNT"
-		if(ASS_FINGERING)
-			return "ASS_FINGERING"
-		if(VAGINA_FINGERING)
-			return "VAGINA_FINGERING"
-//to string end
-
 // can fuck
 /datum/forbidden_controller/proc/can_fuck(mob/living/carbon/human/who, action)
 	if(!istype(who) || owner.stat == DEAD)

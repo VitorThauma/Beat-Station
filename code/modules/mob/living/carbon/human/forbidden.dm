@@ -122,6 +122,12 @@
  *
  */
 
+/obj/item/weapon/storage/ass
+	name = "ass storage"
+	max_w_class = 2
+	max_combined_w_class = 4
+	silent = 1
+
 /mob/living/carbon/human/attackby(obj/item/I, mob/user, params)
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
@@ -232,6 +238,39 @@
 	animate(src, pixel_x = pixel_x + pixel_x_diff, pixel_y = pixel_y + pixel_y_diff, time = 2)
 	animate(pixel_x = initial(pixel_x), pixel_y = final_pixel_y, time = 2)
 
+/*
+ * Forbidden Controller
+ */
+/mob/living/carbon/human/proc/fuck(mob/living/carbon/human/P, /datum/forbidden/action/action)
+
+	if(!istype(P) || !action.conditions(src, P))
+		return 0
+
+	if(!click_check())
+		return 0
+
+	owner.face_atom(P)
+
+	P.erp_controller.time_check()
+
+	click_time = world.time + 10
+	P.erp_controller.timevar = world.time + 40
+
+	lfaction = action
+	lastfucked = P
+
+	var/begins = 0
+	if(P.lastreceived != src || P.lraction != action)
+		begins = 1
+		action.log(src, P)
+
+	action.fuckText(src, P, begins)
+	action.doAction(src, P)
+
+	P.lastreceived = src
+	P.lraction = action
+
+	return 1
 
 /mob/living/carbon/human/proc/moan()
 	if(stat != DEAD)
@@ -271,3 +310,38 @@
 		visible_message("<span class='cum'>[src] cums!</span>")
 
 	pleasure = 0
+
+/mob/living/carbon/human/verb/interact()
+	set name = "Interact"
+	set desc = "Interaction is good!"
+	set category = "IC"
+	set src in view(1)
+
+	if(usr.stat == 1 || usr.restrained() || !isliving(usr))
+		return
+
+/*
+	if(!click_check())
+		return 0
+*/
+
+	ui_interact(usr)
+
+/*
+	var/message = ""
+	if(action == ANAL)
+		if(fucked_action == ANAL)
+			return 0
+		message = "plays with [owner.gender == MALE ? "his" : "her"] anus."
+	else
+		if(is_fuck(fucking_action))
+			return 0
+		if(is_oral(fucked_action))
+			return 0
+		if(fucking_action == VAGINAL)
+			return 0
+		message = "masturbates."
+	owner.visible_message("<span class ='erp'><b>[owner]</b> [message]</span>")
+	give_pleasure(3)
+	click_time = world.time + 10
+*/

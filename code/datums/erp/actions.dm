@@ -15,6 +15,8 @@
 /datum/forbidden/action/proc/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(H.incapacitated())
 		return 0
+	if(get_dist(H, P) > 1)
+		return 0
 	return 1
 
 /datum/forbidden/action/proc/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
@@ -108,6 +110,10 @@
 	PHole = "floor"
 
 /datum/forbidden/action/fuck/anal/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(H.loc != P.loc)
+		return 0
+	if(P.lastreceived != H && istype(P.lraction, type))
+		return 0
 	return ..()
 
 /datum/forbidden/action/fuck/anal/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
@@ -138,6 +144,10 @@
 	PHole = "floor"
 
 /datum/forbidden/action/fuck/vaginal/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(H.loc != P.loc)
+		return 0
+	if(P.lastreceived != H && istype(P.lraction, type))
+		return 0
 	return ..()
 
 /datum/forbidden/action/fuck/vaginal/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
@@ -170,6 +180,10 @@
 	PHole = "floor"
 
 /datum/forbidden/action/fuck/mouth/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(H.loc != P.loc)
+		return 0
+	if(P.lastreceived != H && istype(P.lraction, type))
+		return 0
 	return ..()
 
 /datum/forbidden/action/fuck/mouth/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
@@ -194,6 +208,12 @@
 	PHole = "vagina"
 
 /datum/forbidden/action/fuck/mount/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	if(H.loc != P.loc)
+		return 0
+	if(P.lastreceived != H && istype(P.lraction, type))
+		return 0
+	if(istype(P.lfaction, /datum/forbidden/action/fuck/vaginal))
+		return 0
 	return ..()
 
 /datum/forbidden/action/fuck/mount/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
