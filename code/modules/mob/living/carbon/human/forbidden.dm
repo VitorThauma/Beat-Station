@@ -43,7 +43,9 @@
 
 	var/data[0]
 
-	for(var/datum/forbidden/action/A in forbidden_actions)
+	for(var/key in forbidden_actions)
+		var/datum/forbidden/action/A = forbidden_actions[key]
+
 		if(!A.conditions(user, src))
 			continue
 
@@ -94,7 +96,7 @@
 			return 0
 
 		var/datum/forbidden/action/A = forbidden_actions[href_list["action"]]
-		if(!A.conditions())
+		if(!A.conditions(user, src))
 			return 0
 
 		user.fuck(src, A)

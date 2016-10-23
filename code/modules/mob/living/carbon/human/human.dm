@@ -16,6 +16,8 @@
 		dna = new /datum/dna(null)
 		// Species name is handled by set_species()
 
+	penis_size = rand(5, 25)
+
 	if(!swallow_controller)
 		swallow_controller = new /datum/vore_controller(src)
 

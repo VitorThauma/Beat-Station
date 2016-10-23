@@ -33,15 +33,15 @@
 	H.do_fucking_animation(P)
 
 	if(P != H)
-		H.pleasure += HPleasure
-		P.pleasure += PPleasure
+		H.pleasure += HPleasure * rand(0.8, 1.2)
+		P.pleasure += PPleasure * rand(0.8, 1.2)
 
 		if(H.pleasure >= MAX_PLEASURE)
 			H.cum(P, HHole ? HHole : "floor")
 		if(P.pleasure >= MAX_PLEASURE)
 			P.cum(H, PHole ? PHole : "floor")
 	else
-		P.pleasure += PPleasure
+		P.pleasure += PPleasure * rand(0.8, 1.2)
 		if(P.pleasure >= MAX_PLEASURE)
 			P.cum(H, PHole ? PHole : "floor")
 

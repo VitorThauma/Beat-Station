@@ -2,6 +2,7 @@
 	var/skipgloves = 0
 	var/skipsuitstorage = 0
 	var/skipjumpsuit = 0
+	var/skipunderwear = 0
 	var/skipshoes = 0
 	var/skipmask = 0
 	var/skipears = 0
@@ -13,6 +14,7 @@
 		skipgloves = wear_suit.flags_inv & HIDEGLOVES
 		skipsuitstorage = wear_suit.flags_inv & HIDESUITSTORAGE
 		skipjumpsuit = wear_suit.flags_inv & HIDEJUMPSUIT
+		skipunderwear = (skipjumpsuit || w_uniform)
 		skipshoes = wear_suit.flags_inv & HIDESHOES
 
 	if(head)
@@ -83,6 +85,13 @@
 			msg += "<span class='warning'>[t_He] [t_is] wearing [bicon(w_uniform)] [w_uniform.gender==PLURAL?"some":"a"] [w_uniform.blood_color != "#030303" ? "blood-stained":"oil-stained"] [w_uniform.name][tie_msg]!</span>\n"
 		else
 			msg += "[t_He] [t_is] wearing [bicon(w_uniform)] \a [w_uniform][tie_msg].\n"
+
+	//underwear
+	if(!skipunderwear)
+		if(undershirt)
+			msg += "[t_He] [t_is] wearing [bicon(undershirt)] \a [undershirt].\n"
+		if(underpants)
+			msg += "[t_He] [t_is] wearing [bicon(underpants)] \a [underpants].\n"
 
 	//head
 	if(head && !(head.flags & ABSTRACT))
