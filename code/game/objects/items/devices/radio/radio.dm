@@ -177,8 +177,8 @@ var/global/list/default_medbay_channels = list(
 	return can_admin_interact()
 
 /obj/item/device/radio/proc/text_wires()
-	if (b_stat)
-		return wires.GetInteractWindow()
+	if(b_stat)
+		return wires.Interact()
 	return
 
 /obj/item/device/radio/proc/ToggleBroadcast()

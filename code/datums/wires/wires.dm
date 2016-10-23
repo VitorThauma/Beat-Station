@@ -95,7 +95,7 @@ var/list/wireColours = list("red", "blue", "green", "black", "orange", "brown", 
 
 	ui = nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if (!ui)
-		ui = new(user, src, ui_key, "wires.tmpl", name, 200 + wire_count * 50, 470)
+		ui = new(user, src, ui_key, "wires.tmpl", holder.name, 200 + wire_count * 50, 470)
 		ui.set_initial_data(data)
 		ui.open()
 

@@ -208,6 +208,9 @@
 					C.add_fingerprint(usr)
 
 					usr.visible_message("<span class='notice'>[usr] inserts a power cell into [src].</span>", "<span class='notice'>You insert the power cell into [src].</span>")
+
+		if("showwires")
+			wires.Interact(usr)
 		if("stop")
 			if(mode >= BOT_DELIVER)
 				bot_reset()
@@ -311,7 +314,7 @@
 			else
 				dat += "<A href='?src=\ref[src];op=cellinsert'>Removed</A><BR>"
 
-			dat += wires.GetInteractWindow()
+			dat += "<A href='?src=\ref[src];op=showwires'>Show wires</A><BR>"
 		else
 			dat += "<div class='notice'>The bot is in maintenance mode and cannot be controlled.</div><BR>"
 
