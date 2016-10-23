@@ -17,9 +17,9 @@
 	var/mob/living/carbon/human/lastreceived	// Last person you reveived something
 	var/datum/forbidden/action/lraction			// Last action you received by someone
 
-	var/canfuck = 1
-	var/erpcooldown
-	var/clean_CD
+	var/click_CD
+	var/remove_CD
+	var/pleasure_CD
 
 /*
  * UI
@@ -33,9 +33,6 @@
 	return ..()
 
 /mob/living/carbon/human/ui_interact(mob/living/carbon/human/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1)
-	if(!istype(user) || get_dist(user, src) > 1)
-		return
-
 	var/list/penis_actions = list()
 	var/list/vagina_actions = list()
 	var/list/mouth_actions = list()
@@ -151,7 +148,7 @@
 			var/i = 0
 			for(var/obj/item in ass_storage)
 				i += 1
-				ass_storage.remove_from_storage(item, src.loc)
+				ass_storage.remove_from_storage(item, loc)
 			if(i == 0)
 				to_chat(H, "<span class='warning'>[capitalize(your)] anus is empty.")
 			else
@@ -228,11 +225,15 @@
  * Forbidden Controller
  */
 /mob/living/carbon/human/proc/fuck(mob/living/carbon/human/P, datum/forbidden/action/action)
-	if(!istype(P) || !istype(action) || !canfuck)
+	if(!istype(P) || !istype(action) || !click_time())
 		return 0
 
 	if(!action.conditions(src, P))
 		return 0
+
+	P.remove_CD = world.time + 100
+
+	click_CD = world.time + 10
 
 	face_atom(P)
 
@@ -245,14 +246,10 @@
 		action.logAction(src, P)
 
 	action.fuckText(src, P, begins)
-	action.doAction(src, P)
+	action.doAction(src, P, begins)
 
 	P.lastreceived = src
 	P.lraction = action
-
-	erpcooldown = world.time + 10
-	clean_CD = world.time + 40
-	P.clean_CD = world.time + 40
 
 	return 1
 
@@ -264,7 +261,7 @@
 		if(pleasure >= 30 && prob(12))
 			visible_message("<span class='erp'><b>[src]</b> [gender == FEMALE ? pick("moans in pleasure", "moans") : "moans"].</span>")
 			if(gender == FEMALE)
-				playsound(loc, "sound/forbidden/erp/moan_f[rand(1, 7)].ogg", 70, 1, 0, pitch = get_age_pitch())
+				playsound(loc, "sound/forbidden/erp/moan_f[rand(1, 7)].ogg", 50, 1, 0, pitch = get_age_pitch())
 
 /mob/living/carbon/human/proc/cum(mob/living/carbon/human/P, hole = "floor")
 	if(stat == DEAD)
@@ -289,7 +286,7 @@
 		visible_message("<span class='cum'>[src] cums!</span>")
 		var/obj/effect/decal/cleanable/sex/cum = new /obj/effect/decal/cleanable/sex/femjuice(loc)
 		cum.add_blood_list(src)
-		playsound(loc, "sound/forbidden/erp/final_f[rand(1, 3)].ogg", 90, 1, 0, pitch = get_age_pitch())
+		playsound(loc, "sound/forbidden/erp/final_f[rand(1, 3)].ogg", 50, 1, 0, pitch = get_age_pitch())
 	else
 		visible_message("<span class='cum'>[src] cums!</span>")
 
@@ -300,28 +297,27 @@
 	if(staminaloss > 100)
 		druggy = 300
 
-mob/living/carbon/human/proc/handle_lust()
-	pleasure -= 4
+/mob/living/carbon/human/proc/handle_lust()
+	if(world.time >= remove_CD)
+		if(lastfucked && lastfucked.lastreceived == src)
+			lastfucked.lastreceived = null
+			lastfucked.lraction = null
+		lastfucked = null
+		lfaction = null
+
+	if(world.time >= pleasure_CD && (!lastfucked || !lastreceived))
+		pleasure -= 3
+		pleasure_CD = world.time + 10
+
 	if(pleasure <= 0)
 		pleasure = 0
-		erpcooldown = 0
-		if(lastfucked && lastfucked.lastreceived == src)
-			lastfucked.lastreceived = null
-			lastfucked.lraction = null
-		lastfucked = null
-		lfaction = null
+		remove_CD = 0
 
-	if(world.time > erpcooldown)
-		canfuck = 1
-	else
-		canfuck = 0
+/mob/living/carbon/human/proc/click_time()
+	if(world.time >= click_CD)
+		return 1
+	return 0
 
-	if(world.time > clean_CD)
-		if(lastfucked && lastfucked.lastreceived == src)
-			lastfucked.lastreceived = null
-			lastfucked.lraction = null
-		lastfucked = null
-		lfaction = null
 
 /mob/living/carbon/human/verb/interact()
 	set name = "Interact"

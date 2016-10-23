@@ -26,10 +26,15 @@
 /datum/forbidden/action/proc/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	return
 
-/datum/forbidden/action/proc/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "fucked")
+/datum/forbidden/action/proc/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, text = null)
+	if(text)
+		add_logs(P, H, text)
+		message_admins("[key_name_admin(H)] [text] [key_name_admin(P)]")
+	else
+		add_logs(P, H, "fucked")
+		message_admins("[key_name_admin(H)] fucked [key_name_admin(P)]")
 
-/datum/forbidden/action/proc/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/proc/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	H.do_fucking_animation(P)
 
 	if(P != H)
@@ -86,10 +91,10 @@
 	else
 		H.visible_message("<span class='erp'><b>[H]</b> licks <b>[P]</b>.</span>")
 
-/datum/forbidden/action/oral/cunnilingus/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "gave a cunnilingus to")
+/datum/forbidden/action/oral/cunnilingus/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..(H, P, "gave a cunnilingus to")
 
-/datum/forbidden/action/oral/cunnilingus/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/oral/cunnilingus/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	P.moan()
 	..()
 
@@ -121,10 +126,10 @@
 	else
 		H.visible_message("<span class='erp'><b>[H]</b> sucks [P]'s cock.</span>")
 
-/datum/forbidden/action/oral/blowjob/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "gave a blowjob to")
+/datum/forbidden/action/oral/blowjob/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..(H, P, "gave a blowjob to")
 
-/datum/forbidden/action/oral/blowjob/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/oral/blowjob/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	..()
 
 
@@ -134,6 +139,10 @@
 
 /datum/forbidden/action/fuck/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	if(H == P)
+		return 0
+	if(get_dist(H, P) >= 1)
+		return 0
+	if(P.lastreceived != H && istype(P.lraction, type))
 		return 0
 	return ..()
 
@@ -150,13 +159,9 @@
 	return "Fuck [P.gender == FEMALE ? "her" : "his"] anus"
 
 /datum/forbidden/action/fuck/anal/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	if(H.loc != P.loc)
-		return 0
-	if(P.lastreceived != H && istype(P.lraction, type))
-		return 0
 	if(!P.species.anus || !H.has_penis())
 		return 0
-	if(!H.is_nude() || P.is_nude())
+	if(!H.is_nude() || !P.is_nude())
 		return 0
 	return ..()
 
@@ -169,11 +174,11 @@
 		else
 			H.visible_message("<span class='erp'><b>[H]</b> fucks [P]'s anus.</span>")
 
-/datum/forbidden/action/fuck/anal/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "ass fucked")
+/datum/forbidden/action/fuck/anal/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..(H, P, "ass fucked")
 
-/datum/forbidden/action/fuck/anal/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	if(P.anal_virgin)
+/datum/forbidden/action/fuck/anal/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	if(P.anal_virgin && !begins)
 		P.anal_virgin = 0
 	P.moan()
 
@@ -195,13 +200,9 @@
 	return "Fuck her vagina"
 
 /datum/forbidden/action/fuck/vaginal/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	if(H.loc != P.loc)
-		return 0
-	if(P.lastreceived != H && istype(P.lraction, type))
-		return 0
 	if(!P.has_vagina() || !H.has_penis())
 		return 0
-	if(!H.is_nude() || P.is_nude())
+	if(!H.is_nude() || !P.is_nude())
 		return 0
 	return ..()
 
@@ -209,16 +210,16 @@
 	if(begins)
 		H.visible_message("<span class='erp'><b>[H]</b> begins to [pick("fuck","penetrate")] <b>[P]</b>.</span>")
 	else
-		if(P.anal_virgin)
+		if(P.virgin)
 			H.visible_message("<span class='erp'><b>[H]</b> mercilessly tears [P]'s hymen!</span>")
 		else
 			H.visible_message("<span class='erp'><b>[H]</b> [pick("fucks","penetrates")] <b>[P]</b>.</span>")
 
-/datum/forbidden/action/fuck/vaginal/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "fucked")
+/datum/forbidden/action/fuck/vaginal/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..()
 
-/datum/forbidden/action/fuck/vaginal/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	if(P.virgin)
+/datum/forbidden/action/fuck/vaginal/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	if(P.virgin && !begins)
 		P.emote("scream")
 		new /obj/effect/decal/cleanable/blood(P.loc)
 		P.virgin = 0
@@ -242,10 +243,6 @@
 	return "Fuck [P.gender == FEMALE ? "her" : "his"] mouth"
 
 /datum/forbidden/action/fuck/mouth/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	if(H.loc != P.loc)
-		return 0
-	if(P.lastreceived != H && istype(P.lraction, type))
-		return 0
 	if(!P.is_face_clean())
 		return 0
 	if(!H.has_penis() || !H.is_nude())
@@ -258,10 +255,10 @@
 	else
 		H.visible_message("<span class='erp'><b>[H]</b> fucks [P]'s mouth.</span>")
 
-/datum/forbidden/action/fuck/mouth/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "mouth fucked")
+/datum/forbidden/action/fuck/mouth/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..(H, P, "mouth fucked")
 
-/datum/forbidden/action/fuck/mouth/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/fuck/mouth/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	..()
 
 
@@ -282,7 +279,7 @@
 	return "Mount on him"
 
 /datum/forbidden/action/vagina/mount/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	if(H.loc != P.loc)
+	if(get_dist(H, P) >= 1)
 		return 0
 	if(P.lastreceived != H && istype(P.lraction, type))
 		return 0
@@ -290,7 +287,7 @@
 		return 0
 	if(!P.has_penis() || !H.has_vagina())
 		return 0
-	if(!H.is_nude() || P.is_nude())
+	if(!H.is_nude() || !P.is_nude())
 		return 0
 	if(H == P)
 		return 0
@@ -305,11 +302,11 @@
 	else
 		H.visible_message("<span class='erp'><b>[H]</b> mounts on [P].</span>")
 
-/datum/forbidden/action/vagina/mount/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "mounted on")
+/datum/forbidden/action/vagina/mount/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..(H, P, "mounted on")
 
-/datum/forbidden/action/vagina/mount/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	if(H.virgin)
+/datum/forbidden/action/vagina/mount/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
+	if(H.virgin && !begins)
 		H.emote("scream")
 		new /obj/effect/decal/cleanable/blood(P.loc)
 		H.virgin = 0
@@ -348,10 +345,10 @@
 	else
 		H.visible_message("<span class='erp'><b>[H]</b> fingers her vagina.</span>")
 
-/datum/forbidden/action/fingering/vagina/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "vagina fingered")
+/datum/forbidden/action/fingering/vagina/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..(H, P, "vagina fingered")
 
-/datum/forbidden/action/fingering/vagina/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/fingering/vagina/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	..()
 
 
@@ -383,10 +380,10 @@
 	else
 		H.visible_message("<span class='erp'><b>[H]</b> plays with [H.gender == FEMALE ? "her" : "his"] anus.</span>")
 
-/datum/forbidden/action/fingering/anus/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "ass fingered")
+/datum/forbidden/action/fingering/anus/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..(H, P, "ass fingered")
 
-/datum/forbidden/action/fingering/anus/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/fingering/anus/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	..()
 
 
@@ -420,8 +417,8 @@
 	else
 		H.visible_message("<span class='erp'><b>[H]</b> masturbates.</span>")
 
-/datum/forbidden/action/handjob/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	add_logs(P, H, "handjob")
+/datum/forbidden/action/handjob/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..(H, P, "handjob")
 
-/datum/forbidden/action/handjob/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
+/datum/forbidden/action/handjob/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	..()
