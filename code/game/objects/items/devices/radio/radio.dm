@@ -176,11 +176,6 @@ var/global/list/default_medbay_channels = list(
 /mob/dead/observer/has_internal_radio_channel_access(var/mob/user, var/list/req_one_accesses)
 	return can_admin_interact()
 
-/obj/item/device/radio/proc/text_wires()
-	if(b_stat)
-		return wires.Interact()
-	return
-
 /obj/item/device/radio/proc/ToggleBroadcast()
 	broadcasting = !broadcasting && !(wires.IsIndexCut(WIRE_TRANSMIT) || wires.IsIndexCut(WIRE_SIGNAL))
 
@@ -582,9 +577,9 @@ var/global/list/default_medbay_channels = list(
 	user.set_machine(src)
 	if (!( istype(W, /obj/item/weapon/screwdriver) ))
 		return
-	b_stat = !( b_stat )
+	b_stat = !(b_stat)
 	if(!istype(src, /obj/item/device/radio/beacon))
-		if (b_stat)
+		if(b_stat)
 			user.show_message("\blue The radio can now be attached and modified!")
 		else
 			user.show_message("\blue The radio can no longer be modified or attached!")
@@ -592,7 +587,8 @@ var/global/list/default_medbay_channels = list(
 			//Foreach goto(83)
 		add_fingerprint(user)
 		return
-	else return
+	else
+		return
 
 /obj/item/device/radio/emp_act(severity)
 	broadcasting = 0
