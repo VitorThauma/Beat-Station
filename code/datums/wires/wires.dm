@@ -70,38 +70,34 @@ var/list/wireColours = list("red", "blue", "green", "black", "orange", "brown", 
 
 
 /datum/wires/proc/Interact(var/mob/living/user)
-
-	var/html = null
 	if(holder && CanUse(user))
-		html = GetInteractWindow()
-	if(html)
-		user.set_machine(holder)
-	else
-		user.unset_machine()
-		// No content means no window.
-		user << browse(null, "window=wires")
-		return
-	var/datum/browser/popup = new(user, "wires", holder.name, window_x, window_y)
-	popup.set_content(html)
-	popup.set_title_image(user.browse_rsc_icon(holder.icon, holder.icon_state))
-	popup.open()
+		ui_interact(user)
 
-/datum/wires/proc/GetInteractWindow()
-	var/html = "<div class='block'>"
-	html += "<h3>Exposed Wires</h3>"
-	html += "<table[table_options]>"
+/datum/wires/proc/getStatus()
+	return
 
+/datum/wires/ui_interact(mob/user, ui_key="main", var/datum/nanoui/ui = null, var/force_open = 1)
+	user.set_machine(src)
+
+	var/data[0]
+	data["wires"] = null
+
+	var/list/W[0]
 	for(var/colour in wires)
-		html += "<tr>"
-		html += "<td[row_options1]><font color='[colour]'>[capitalize(colour)]</font></td>"
-		html += "<td[row_options2]>"
-		html += "<A href='?src=\ref[src];action=1;cut=[colour]'>[IsColourCut(colour) ? "Mend" :  "Cut"]</A>"
-		html += " <A href='?src=\ref[src];action=1;pulse=[colour]'>Pulse</A>"
-		html += " <A href='?src=\ref[src];action=1;attach=[colour]'>[IsAttached(colour) ? "Detach" : "Attach"] Signaller</A></td></tr>"
-	html += "</table>"
-	html += "</div>"
+		W.Add(list(list(\
+			"colour" = colour, \
+			"cut" = IsColourCut(colour), \
+			"attached" = IsAttached(colour))))
+	if(W.len > 0)
+		data["wires"] = W
 
-	return html
+	data["status"] = getStatus()
+
+	ui = nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)
+	if (!ui)
+		ui = new(user, src, ui_key, "wires.tmpl", name, 550, 650)
+		ui.set_initial_data(data)
+		ui.open()
 
 /datum/wires/Topic(href, href_list)
 	..()

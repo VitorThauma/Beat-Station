@@ -19,13 +19,14 @@ var/const/VENDING_WIRE_IDSCAN = 8
 		return 1
 	return 0
 
-/datum/wires/vending/GetInteractWindow()
+/datum/wires/vending/getStatus()
 	var/obj/machinery/vending/V = holder
-	. += ..()
-	. += "<BR>The orange light is [V.seconds_electrified ? "on" : "off"].<BR>"
-	. += "The red light is [V.shoot_inventory ? "off" : "blinking"].<BR>"
-	. += "The green light is [(V.categories & CAT_HIDDEN) ? "on" : "off"].<BR>"
-	. += "A [V.scan_id ? "purple" : "yellow"] light is on.<BR>"
+	var/list/status = list()
+	status.Add("The orange light is [V.seconds_electrified ? "on" : "off"].")
+	status.Add("The red light is [V.shoot_inventory ? "off" : "blinking"].")
+	status.Add("The green light is [(V.categories & CAT_HIDDEN) ? "on" : "off"].")
+	status.Add("A [V.scan_id ? "purple" : "yellow"] light is on.")
+	return status
 
 /datum/wires/vending/UpdatePulsed(var/index)
 	var/obj/machinery/vending/V = holder

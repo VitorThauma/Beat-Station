@@ -1,16 +1,27 @@
-<div class="block">
-	{{for data.wires}}
-		<div class="item">
-			<div class="itemLabelNarrow">{{:value.color}}</div>
-			<div class="itemContentWide">
-				{{:helper.link(value.cut ? 'Mend' : 'Cut', 'scissors', {'wire' : value.color , 'action' : 'cut'})}}
-				{{:helper.link('Pulse', 'gear', {'wire' : value.color , 'action' : 'pulse'})}}
-				{{:helper.link(value.attached ? 'Detach' : 'Attach', 'signal', {'wire' : value.color , 'action' : 'attach'})}}
+<!-- 
+Title: Wires
+Used In File(s): /code/datums/wires/wires.dm
+-->
+
+<h1>Exposed Wires</h1>
+
+{{if data.wires}}
+	<div class="block">
+		{{for data.wires}}
+			<div class="item">
+				<div class="itemLabelNarrow">{{:value.color}}</div>
+				<div class="itemContentWide">
+					{{:helper.link(value.cut ? 'Mend' : 'Cut', 'scissors', {'wire' : value.color , 'action' : 'cut'})}}
+					{{:helper.link('Pulse', 'gear', {'wire' : value.color , 'action' : 'pulse'})}}
+					{{:helper.link(value.attached ? 'Detach Signaller' : 'Attach Signaller', 'signal', {'wire' : value.color , 'action' : 'attach'})}}
+				</div>
 			</div>
-		</div>
-	{{/for}}
-</div>
+		{{/for}}
+	</div>
+{{/if}}
+
 <br><hr><br>
+
 {{if data.status}}
 	{{for data.status}}
 		<div class='line'>{{:value}}</div><br>

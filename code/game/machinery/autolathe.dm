@@ -88,17 +88,13 @@
 	user.set_machine(src)
 	var/dat
 
-	if(panel_open)
-		dat = wires.GetInteractWindow()
-
-	else
-		switch(screen)
-			if(AUTOLATHE_MAIN_MENU)
-				dat = main_win(user)
-			if(AUTOLATHE_CATEGORY_MENU)
-				dat = category_win(user,selected_category)
-			if(AUTOLATHE_SEARCH_MENU)
-				dat = search_win(user)
+	switch(screen)
+		if(AUTOLATHE_MAIN_MENU)
+			dat = main_win(user)
+		if(AUTOLATHE_CATEGORY_MENU)
+			dat = category_win(user,selected_category)
+		if(AUTOLATHE_SEARCH_MENU)
+			dat = search_win(user)
 
 	var/datum/browser/popup = new(user, "autolathe", name, 800, 500)
 	popup.set_content(dat)
@@ -173,6 +169,8 @@
 	interact(user)
 
 /obj/machinery/autolathe/attack_hand(mob/user)
+	if(panel_open && !isAI(user))
+		return wires.Interact(user)
 	if(..(user, 0))
 		return
 	interact(user)

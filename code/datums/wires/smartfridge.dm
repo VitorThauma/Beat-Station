@@ -20,12 +20,13 @@ var/const/SMARTFRIDGE_WIRE_IDSCAN		= 4
 		return 1
 	return 0
 
-/datum/wires/smartfridge/GetInteractWindow()
+/datum/wires/smartfridge/getStatus()
 	var/obj/machinery/smartfridge/S = holder
-	. += ..()
-	. += "<BR>The orange light is [S.seconds_electrified ? "off" : "on"].<BR>"
-	. += "The red light is [S.shoot_inventory ? "off" : "blinking"].<BR>"
-	. += "A [S.scan_id ? "purple" : "yellow"] light is on.<BR>"
+	var/list/status = list()
+	status.Add("The orange light is [S.seconds_electrified ? "off" : "on"].")
+	status.Add("The red light is [S.shoot_inventory ? "off" : "blinking"].")
+	status.Add("A [S.scan_id ? "purple" : "yellow"] light is on.")
+	return status
 
 /datum/wires/smartfridge/UpdatePulsed(var/index)
 	var/obj/machinery/smartfridge/S = holder
