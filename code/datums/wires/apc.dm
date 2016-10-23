@@ -10,9 +10,9 @@ var/const/APC_WIRE_AI_CONTROL = 8
 /datum/wires/apc/getStatus()
 	var/obj/machinery/power/apc/A = holder
 	var/list/status = list()
-	status.Add(A.locked ? "The APC is locked." : "The APC is unlocked.")
-	status.Add(A.shorted ? "The APCs power has been shorted." : "The APC is working properly!")
-	status.Add(A.aidisabled ? "The 'AI control allowed' light is off." : "The 'AI control allowed' light is on.")
+	status += A.locked ? "The APC is locked." : "The APC is unlocked."
+	status += A.shorted ? "The APCs power has been shorted." : "The APC is working properly!"
+	status += A.aidisabled ? "The 'AI control allowed' light is off." : "The 'AI control allowed' light is on."
 	return status
 
 /datum/wires/apc/CanUse(var/mob/living/L)

@@ -9,7 +9,7 @@ Used In File(s): /code/datums/wires/wires.dm
 	<div class="block">
 		{{for data.wires}}
 			<div class="item">
-				<div class="itemLabelNarrow">{{:value.color}}</div>
+				<div class="itemLabelNarrow" style="{{:value.color}}">{{:value.color}}</div>
 				<div class="itemContentWide">
 					{{:helper.link(value.cut ? 'Mend' : 'Cut', 'scissors', {'wire' : value.color , 'action' : 'cut'})}}
 					{{:helper.link('Pulse', 'gear', {'wire' : value.color , 'action' : 'pulse'})}}

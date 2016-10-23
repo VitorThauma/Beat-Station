@@ -8,10 +8,10 @@
 /datum/wires/camera/getStatus()
 	var/obj/machinery/camera/C = holder
 	var/list/status = list()
-	status.Add(C.view_range == initial(C.view_range) ? "The focus light is on." : "The focus light is off.")
-	status.Add(C.can_use() ? "The power link light is on." : "The power link light is off.")
-	status.Add(C.light_disabled ? "The camera light is off." : "The camera light is on.")
-	status.Add(C.alarm_on ? "The alarm light is on." : "The alarm light is off.")
+	status += C.view_range == initial(C.view_range) ? "The focus light is on." : "The focus light is off."
+	status += C.can_use() ? "The power link light is on." : "The power link light is off."
+	status += C.light_disabled ? "The camera light is off." : "The camera light is on."
+	status += C.alarm_on ? "The alarm light is on." : "The alarm light is off."
 	return status
 
 /datum/wires/camera/CanUse(var/mob/living/L)

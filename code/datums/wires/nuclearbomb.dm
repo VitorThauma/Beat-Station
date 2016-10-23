@@ -16,9 +16,9 @@ var/const/NUCLEARBOMB_WIRE_SAFETY		= 4
 /datum/wires/nuclearbomb/getStatus()
 	var/obj/machinery/nuclearbomb/N = holder
 	var/list/status = list()
-	status.Add("The device is [N.timing ? "shaking!" : "still."]")
-	status.Add("The device is is [N.safety ? "quiet" : "whirring"].")
-	status.Add("The lights are [N.lighthack ? "static" : "functional"].")
+	status += "The device is [N.timing ? "shaking!" : "still."]"
+	status += "The device is is [N.safety ? "quiet" : "whirring"]."
+	status += "The lights are [N.lighthack ? "static" : "functional"]."
 	return status
 
 /datum/wires/nuclearbomb/UpdatePulsed(var/index)

@@ -19,9 +19,9 @@ var/const/AALARM_WIRE_AALARM = 16
 /datum/wires/alarm/getStatus()
 	var/obj/machinery/alarm/A = holder
 	var/list/status = list()
-	status.Add(A.locked ? "The Air Alarm is locked." : "The Air Alarm is unlocked.")
-	status.Add((A.shorted || (A.stat & (NOPOWER|BROKEN))) ? "The Air Alarm is offline." : "The Air Alarm is working properly!")
-	status.Add(A.aidisabled ? "The 'AI control allowed' light is off." : "The 'AI control allowed' light is on.")
+	status += A.locked ? "The Air Alarm is locked." : "The Air Alarm is unlocked."
+	status += (A.shorted || (A.stat & (NOPOWER|BROKEN))) ? "The Air Alarm is offline." : "The Air Alarm is working properly!"
+	status += A.aidisabled ? "The 'AI control allowed' light is off." : "The 'AI control allowed' light is on."
 	return status
 
 /datum/wires/alarm/UpdateCut(var/index, var/mended)

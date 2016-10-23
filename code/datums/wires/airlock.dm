@@ -36,13 +36,13 @@ var/const/AIRLOCK_WIRE_LIGHT = 2048
 	var/haspower = A.arePowerSystemsOn()
 
 	var/list/status = list()
-	status.Add(A.locked ? "The door bolts have fallen!" : "The door bolts look up.")
-	status.Add((A.lights && haspower) ? "The door bolt lights are on." : "The door bolt lights are off!")
-	status.Add(haspower ? "The test light is on." : "The test light is off!")
-	status.Add((A.aiControlDisabled==0 && !A.emagged && haspower) ? "The 'AI control allowed' light is on." : "The 'AI control allowed' light is off.")
-	status.Add((A.safe==0 && haspower) ? "The 'Check Wiring' light is on." : "The 'Check Wiring' light is off.")
-	status.Add((A.normalspeed==0 && haspower) ? "The 'Check Timing Mechanism' light is on." : "The 'Check Timing Mechanism' light is off.")
-	status.Add((A.emergency && haspower) ? "The emergency lights are on." : "The emergency lights are off.")
+	status += A.locked ? "The door bolts have fallen!" : "The door bolts look up."
+	status += (A.lights && haspower) ? "The door bolt lights are on." : "The door bolt lights are off!"
+	status += haspower ? "The test light is on." : "The test light is off!"
+	status += (A.aiControlDisabled==0 && !A.emagged && haspower) ? "The 'AI control allowed' light is on." : "The 'AI control allowed' light is off."
+	status += (A.safe==0 && haspower) ? "The 'Check Wiring' light is on." : "The 'Check Wiring' light is off."
+	status += (A.normalspeed==0 && haspower) ? "The 'Check Timing Mechanism' light is on." : "The 'Check Timing Mechanism' light is off."
+	status += (A.emergency && haspower) ? "The emergency lights are on." : "The emergency lights are off."
 	return status
 
 /datum/wires/airlock/UpdateCut(var/index, var/mended)
