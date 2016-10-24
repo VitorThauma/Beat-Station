@@ -77,7 +77,7 @@ var/list/wireColours = list("red", "blue", "green", "black", "orange", "brown", 
 	return
 
 /datum/wires/ui_interact(mob/user, ui_key="main", var/datum/nanoui/ui = null, var/force_open = 1)
-	user.set_machine(src)
+	user.set_machine(holder)
 
 	var/data[0]
 	data["wires"] = null
@@ -93,24 +93,24 @@ var/list/wireColours = list("red", "blue", "green", "black", "orange", "brown", 
 
 	data["status"] = getStatus()
 
-	ui = nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)
+	ui = nanomanager.try_update_ui(user, holder, ui_key, ui, data, force_open)
 	if (!ui)
-		ui = new(user, src, ui_key, "wires.tmpl", holder.name, 200 + wire_count * 50, 470)
+		ui = new(user, holder, ui_key, "wires.tmpl", holder.name, 200 + wire_count * 50, 470)
 		ui.set_initial_data(data)
 		ui.open()
 
 /datum/wires/Topic(href, href_list)
-	..()
 	if(in_range(holder, usr) && isliving(usr))
-
 		var/mob/living/L = usr
+		var/colour = href_list["wire"]
+
 		if(CanUse(L) && href_list["action"])
 			var/obj/item/I = L.get_active_hand()
+
 			holder.add_hiddenprint(L)
 			if(href_list["cut"]) // Toggles the cut/mend status
 				if(istype(I, /obj/item/weapon/wirecutters))
 					playsound(holder, 'sound/items/Wirecutter.ogg', 20, 1)
-					var/colour = href_list["cut"]
 					CutWireColour(colour)
 				else
 					to_chat(L, "<span class='error'>You need wirecutters!</span>")
@@ -118,19 +118,16 @@ var/list/wireColours = list("red", "blue", "green", "black", "orange", "brown", 
 			else if(href_list["pulse"])
 				if(istype(I, /obj/item/device/multitool))
 					playsound(holder, 'sound/weapons/empty.ogg', 20, 1)
-					var/colour = href_list["pulse"]
 					PulseColour(colour)
 				else
 					to_chat(L, "<span class='error'>You need a multitool!</span>")
 
 			else if(href_list["attach"])
-				var/colour = href_list["attach"]
 				// Detach
 				if(IsAttached(colour))
 					var/obj/item/O = Detach(colour)
 					if(O)
 						L.put_in_hands(O)
-
 				// Attach
 				else
 					if(istype(I, /obj/item/device/assembly/signaler))
@@ -139,15 +136,7 @@ var/list/wireColours = list("red", "blue", "green", "black", "orange", "brown", 
 					else
 						to_chat(L, "<span class='error'>You need a remote signaller!</span>")
 
-
-
-
-		// Update Window
-			Interact(usr)
-
-	if(href_list["close"])
-		usr << browse(null, "window=wires")
-		usr.unset_machine(holder)
+	nanomanager.update_uis(src)
 
 //
 // Overridable Procs
