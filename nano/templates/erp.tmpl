@@ -60,6 +60,21 @@ Used In File(s): /code/modules/mob/living/carbon/human/human.dm
 	</div>
 {{/if}}
 
+<br><hr><br>
+
+<!-- Misc -->
+{{if data.emote_len}}
+	<div class='itemLabel'>
+		Emotes: 
+	</div>
+
+	<div class='itemContent'>
+		{{for data.emote_list}}
+			{{:helper.link(value.action_button, data.icon, {'emote' : value.name})}}
+		{{/for}}
+	</div>
+{{/if}}
+
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 <a align="right">Criado por <b>Davipatuly</b>.</a>
 <br>

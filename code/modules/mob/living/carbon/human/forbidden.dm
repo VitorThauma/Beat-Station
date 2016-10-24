@@ -38,6 +38,8 @@
 	var/list/mouth_actions = list()
 	var/list/misc_actions = list()
 
+	var/list/emote_list = list()
+
 	var/data[0]
 
 	for(var/key in forbidden_actions)
@@ -45,17 +47,20 @@
 
 		if(!A.conditions(user, src))
 			continue
-
-		if(istype(A, /datum/forbidden/action/oral))
+		if(isoral(A))
 			mouth_actions.Add(list(list(\
 				"action_button" = A.actionButton(user, src), \
 				"name" = A.name)))
-		else if(istype(A, /datum/forbidden/action/fuck))
+		else if(isfuck(A))
 			penis_actions.Add(list(list(\
 				"action_button" = A.actionButton(user, src), \
 				"name" = A.name)))
-		else if(istype(A, /datum/forbidden/action/vagina))
+		else if(isvagina(A))
 			vagina_actions.Add(list(list(\
+				"action_button" = A.actionButton(user, src), \
+				"name" = A.name)))
+		else if(isemote(A))
+			emote_list.Add(list(list(\
 				"action_button" = A.actionButton(user, src), \
 				"name" = A.name)))
 		else
@@ -74,6 +79,9 @@
 
 	data["misc_list"] = misc_actions
 	data["misc_len"] = misc_actions.len
+
+	data["emote_list"] = emote_list
+	data["emote_len"] = emote_list.len
 
 	data["src_name"] = "[src]"
 	data["icon"] = (gender == user.gender ? gender == MALE ? "mars-double" : "venus-double" : "venus-mars")
@@ -97,6 +105,16 @@
 			return 0
 
 		user.fuck(src, A)
+
+	if(href_list["emote"])
+		if(!(href_list["action"] in forbidden_actions))
+			return 0
+
+		var/datum/forbidden/action/emote/A = forbidden_actions[href_list["action"]]
+		if(!A.conditions(user, src))
+			return 0
+
+		user.actionEmote(src, A)
 
 
 /*
@@ -224,6 +242,7 @@
 /*
  * Forbidden Controller
  */
+
 /mob/living/carbon/human/proc/fuck(mob/living/carbon/human/P, datum/forbidden/action/action)
 	if(!istype(P) || !istype(action) || !click_time())
 		return 0
@@ -329,3 +348,24 @@
 		return
 
 	ui_interact(usr)
+
+/*
+ * EMOTES
+ */
+
+/mob/living/carbon/human/proc/actionEmote(mob/living/carbon/human/P, datum/forbidden/action/emote/emote)
+	if(!istype(P) || !istype(emote) || !click_time())
+		return 0
+
+	if(!emote.conditions(src, P))
+		return 0
+
+	click_CD = world.time + 10
+
+	face_atom(P)
+
+	action.logAction(src, P)
+	action.fuckText(src, P)
+	action.doAction(src, P)
+
+	return 1
