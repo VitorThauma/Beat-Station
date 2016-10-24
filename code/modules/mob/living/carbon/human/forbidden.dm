@@ -364,8 +364,8 @@
 
 	face_atom(P)
 
-	action.logAction(src, P)
-	action.fuckText(src, P)
-	action.doAction(src, P)
+	emote.logAction(src, P)
+	emote.fuckText(src, P)
+	emote.doAction(src, P)
 
 	return 1
