@@ -107,10 +107,10 @@
 		user.fuck(src, A)
 
 	if(href_list["emote"])
-		if(!(href_list["action"] in forbidden_actions))
+		if(!(href_list["emote"] in forbidden_actions))
 			return 0
 
-		var/datum/forbidden/action/emote/A = forbidden_actions[href_list["action"]]
+		var/datum/forbidden/action/emote/A = forbidden_actions[href_list["emote"]]
 		if(!A.conditions(user, src))
 			return 0
 
