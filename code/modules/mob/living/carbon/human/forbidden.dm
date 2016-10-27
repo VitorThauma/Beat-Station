@@ -42,31 +42,40 @@
 
 	var/data[0]
 
+
 	for(var/key in forbidden_actions)
 		var/datum/forbidden/action/A = forbidden_actions[key]
 
-		if(!A.conditions(user, src))
+		var/c = A.conditions(user, src)
+		if(c == -1)
 			continue
+
 		if(isoral(A))
 			mouth_actions.Add(list(list(\
 				"action_button" = A.actionButton(user, src), \
+				"status" = (c ? null : "disabled"), \
 				"name" = A.name)))
 		else if(isfuck(A))
 			penis_actions.Add(list(list(\
 				"action_button" = A.actionButton(user, src), \
+				"status" = (c ? null : "disabled"), \
 				"name" = A.name)))
 		else if(isvagina(A))
 			vagina_actions.Add(list(list(\
 				"action_button" = A.actionButton(user, src), \
+				"status" = (c ? null : "disabled"), \
 				"name" = A.name)))
 		else if(isemote(A))
 			emote_list.Add(list(list(\
 				"action_button" = A.actionButton(user, src), \
+				"status" = (c ? null : "disabled"), \
 				"name" = A.name)))
 		else
 			misc_actions.Add(list(list(\
 				"action_button" = A.actionButton(user, src), \
+				"status" = (c ? null : "disabled"), \
 				"name" = A.name)))
+
 
 	data["penis_list"] = penis_actions
 	data["penis_len"] = penis_actions.len
@@ -189,8 +198,6 @@
 /mob/living/carbon/human/proc/is_face_clean()
 	if(((head && (head.flags & HEADCOVERSMOUTH)) || (wear_mask && (wear_mask.flags & MASKCOVERSMOUTH))))
 		return 0
-	if(!check_has_mouth())
-		return 0
 	return 1
 
 /*
@@ -251,6 +258,7 @@
 		return 0
 
 	P.remove_CD = world.time + 100
+	remove_CD = world.time + 100
 
 	click_CD = world.time + 10
 
@@ -312,9 +320,9 @@
 	add_logs(P, src, "came on")
 	pleasure = 0
 
-	druggy = 60
+	druggy = 10
 	if(staminaloss > 100)
-		druggy = 300
+		druggy = 20
 
 /mob/living/carbon/human/proc/handle_lust()
 	if(world.time >= remove_CD)
@@ -324,7 +332,7 @@
 		lastfucked = null
 		lfaction = null
 
-	if(world.time >= pleasure_CD && (!lastfucked || !lastreceived))
+	if(world.time >= pleasure_CD && (!lastfucked && !lastreceived))
 		pleasure -= 3
 		pleasure_CD = world.time + 10
 

@@ -4,29 +4,9 @@
  *
  */
 
-/datum/forbidden/action/emote
-	var/name
-	var/HPleasure	// How much pleasure who is giving the action receive
-	var/PPleasure	// How much pleasure who is receiving the action receive
-					// This is a base, can be more or less
-
-	var/HHole		// Used when who is giving the action cums
-	var/PHole		// Used when who is receiving the action cums
-
-/datum/forbidden/action/emote/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	return
-
 /datum/forbidden/action/emote/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	if(H.incapacitated())
-		return 0
-	if(get_dist(H, P) > 1)
-		return 0
 	if(P == H)
-		return 0
-	return 1
-
-/datum/forbidden/action/emote/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
-	return
+		return -1
 
 /datum/forbidden/action/emote/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P, text = null)
 	if(text)
@@ -34,12 +14,12 @@
 
 /datum/forbidden/action/emote/doAction(mob/living/carbon/human/H, mob/living/carbon/human/P, begins = 0)
 	if(HPleasure)
-		H.pleasure += HPleasure * rand(0.8, 1.2)
+		H.pleasure += HPleasure * rand(0.9, 1.2)
 		if(H.pleasure >= MAX_PLEASURE)
 			H.cum(P, HHole ? HHole : "floor")
 
 	if(PPleasure)
-		P.pleasure += PPleasure * rand(0.8, 1.2)
+		P.pleasure += PPleasure * rand(0.9, 1.2)
 		if(P.pleasure >= MAX_PLEASURE)
 			P.cum(H, PHole ? PHole : "floor")
 
@@ -60,12 +40,17 @@
 	PHole = "floor"
 
 /datum/forbidden/action/emote/kiss/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	return "Kiss [P.gender == FEMALE ? "her" : "him"]"
+	return "Kiss [P.gender == FEMALE ? "her" : "his"] lips"
 
 /datum/forbidden/action/emote/kiss/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..()
+
+	if(!H.check_has_mouth() || !P.check_has_mouth())
+		return -1
 	if(!H.is_face_clean() || !P.is_face_clean())
 		return 0
-	return ..()
+
+	return 1
 
 /datum/forbidden/action/emote/kiss/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	H.visible_message("<span class='erp'><b>[H]</b> kisses <b>[P]</b>.</span>")
@@ -86,17 +71,22 @@
 	PHole = "floor"
 
 /datum/forbidden/action/emote/lick/actionButton(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	return "Lick [P.gender == FEMALE ? "her" : "his"]"
+	return "Lick [P.gender == FEMALE ? "her" : "his"] lips"
 
 /datum/forbidden/action/emote/lick/conditions(mob/living/carbon/human/H, mob/living/carbon/human/P)
+	..()
+
+	if(!H.check_has_mouth() || !P.check_has_mouth())
+		return -1
+	if(H.species.name != "Tajaran") // Only tajarans can lick other's lips
+		return -1
 	if(!H.is_face_clean() || !P.is_face_clean())
 		return 0
-	if(H.species.name != "Tajaran") // Only tajarans can lick
-		return 0
-	return ..()
+
+	return 1
 
 /datum/forbidden/action/emote/lick/fuckText(mob/living/carbon/human/H, mob/living/carbon/human/P)
-	H.visible_message("<span class='erp'><b>[H]</b> licks [P]'s [prob(50) ? "mouth" : "face"].</span>")
+	H.visible_message("<span class='erp'><b>[H]</b> licks [P]'s lips.</span>")
 
 /datum/forbidden/action/emote/lick/logAction(mob/living/carbon/human/H, mob/living/carbon/human/P)
 	..(H, P, "licked")
