@@ -33,16 +33,12 @@
 	return ..()
 
 /mob/living/carbon/human/ui_interact(mob/living/carbon/human/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1)
+	var/data[0]
+
 	var/list/penis_actions = list()
 	var/list/vagina_actions = list()
 	var/list/mouth_actions = list()
 	var/list/misc_actions = list()
-
-	var/list/emote_list = list()
-
-	var/data[0]
-
-
 	for(var/key in forbidden_actions)
 		var/datum/forbidden/action/A = forbidden_actions[key]
 
@@ -65,11 +61,6 @@
 				"action_button" = A.actionButton(user, src), \
 				"status" = (c ? null : "disabled"), \
 				"name" = A.name)))
-		else if(isemote(A))
-			emote_list.Add(list(list(\
-				"action_button" = A.actionButton(user, src), \
-				"status" = (c ? null : "disabled"), \
-				"name" = A.name)))
 		else
 			misc_actions.Add(list(list(\
 				"action_button" = A.actionButton(user, src), \
@@ -77,20 +68,26 @@
 				"name" = A.name)))
 
 
+	var/list/emote_list = list()
+	for(var/key in forbidden_emotes)
+		var/datum/forbidden/emote/E = forbidden_emotes[key]
+
+		var/c = E.conditions(user, src)
+		if(c == -1)
+			continue
+
+		emote_list.Add(list(list(\
+			"action_button" = E.actionButton(user, src), \
+			"status" = (c ? null : "disabled"), \
+			"name" = E.name)))
+
+	data["lens"] = list("penis_len" = penis_actions.len, "vagina_len" = vagina_actions.len, "mouth_len" = mouth_actions.len, "misc_len" = misc_actions.len, "emote_len" = emote_list.len)
+
 	data["penis_list"] = penis_actions
-	data["penis_len"] = penis_actions.len
-
 	data["vagina_list"] = vagina_actions
-	data["vagina_len"] = vagina_actions.len
-
 	data["mouth_list"] = mouth_actions
-	data["mouth_len"] = mouth_actions.len
-
 	data["misc_list"] = misc_actions
-	data["misc_len"] = misc_actions.len
-
 	data["emote_list"] = emote_list
-	data["emote_len"] = emote_list.len
 
 	data["src_name"] = "[src]"
 	data["icon"] = (gender == user.gender ? gender == MALE ? "mars-double" : "venus-double" : "venus-mars")
@@ -116,14 +113,14 @@
 		user.fuck(src, A)
 
 	if(href_list["emote"])
-		if(!(href_list["emote"] in forbidden_actions))
+		if(!(href_list["emote"] in forbidden_emotes))
 			return 0
 
-		var/datum/forbidden/action/emote/A = forbidden_actions[href_list["emote"]]
-		if(!A.conditions(user, src))
+		var/datum/forbidden/emote/M = forbidden_emotes[href_list["emote"]]
+		if(!M.conditions(user, src))
 			return 0
 
-		user.actionEmote(src, A)
+		user.actionEmote(src, M)
 
 
 /*
@@ -193,7 +190,14 @@
  * IS HELPERS
  */
 /mob/living/carbon/human/proc/is_nude()
-	return (!istype(w_uniform, /obj/item/clothing/under) && !istype(underpants, /obj/item/clothing/underwear/underpants))
+	if(wear_suit && wear_suit.flags_inv & HIDEJUMPSUIT)
+		return 0
+	if(istype(w_uniform, /obj/item/clothing/under)
+		return 0
+	if(istype(underpants, /obj/item/clothing/underwear/underpants))
+		return 0
+
+	return 1
 
 /mob/living/carbon/human/proc/is_face_clean()
 	if(((head && (head.flags & HEADCOVERSMOUTH)) || (wear_mask && (wear_mask.flags & MASKCOVERSMOUTH))))
@@ -361,7 +365,7 @@
  * EMOTES
  */
 
-/mob/living/carbon/human/proc/actionEmote(mob/living/carbon/human/P, datum/forbidden/action/emote/emote)
+/mob/living/carbon/human/proc/actionEmote(mob/living/carbon/human/P, datum/forbidden/emote/emote)
 	if(!istype(P) || !istype(emote) || !click_time())
 		return 0
 
@@ -373,7 +377,7 @@
 	face_atom(P)
 
 	emote.logAction(src, P)
-	emote.fuckText(src, P)
+	emote.showText(src, P)
 	emote.doAction(src, P)
 
 	return 1

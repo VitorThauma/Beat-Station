@@ -14,8 +14,9 @@
 		skipgloves = wear_suit.flags_inv & HIDEGLOVES
 		skipsuitstorage = wear_suit.flags_inv & HIDESUITSTORAGE
 		skipjumpsuit = wear_suit.flags_inv & HIDEJUMPSUIT
-		skipunderwear = (skipjumpsuit || w_uniform)
 		skipshoes = wear_suit.flags_inv & HIDESHOES
+
+	skipunderwear = (skipjumpsuit || w_uniform)
 
 	if(head)
 		skipmask = head.flags_inv & HIDEMASK
