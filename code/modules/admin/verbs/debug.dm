@@ -1468,7 +1468,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 			if(!Rad.active)
 				Rad.toggle_power()
 
-	for(var/obj/machinery/power/smes/SMES in machines)
+	for(var/obj/machinery/power/smes/SMES in SMESs)
 		if(SMES.anchored)
 			SMES.input_attempt = 1
 
