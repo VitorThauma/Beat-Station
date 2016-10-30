@@ -125,7 +125,7 @@
 		return -1
 	if(isfuck(P.lfaction))
 		return 0
-	if(isvagina(P.lraction))
+	if(isvagina(P.lfaction))
 		return 0
 	if(!H.is_face_clean())
 		return 0
