@@ -199,8 +199,6 @@
 		P.anal_virgin = 0
 	P.moan()
 
-	P.staminaloss += H.pleasure * 0.2
-
 	..()
 
 
@@ -255,8 +253,6 @@
 		new /obj/effect/decal/cleanable/blood(P.loc)
 		P.virgin = 0
 	P.moan()
-
-	P.staminaloss += H.pleasure * 0.2
 
 	..()
 
@@ -359,8 +355,6 @@
 		new /obj/effect/decal/cleanable/blood(P.loc)
 		H.virgin = 0
 	H.moan()
-
-	H.staminaloss += P.pleasure * 0.2
 
 	..()
 
