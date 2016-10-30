@@ -336,9 +336,10 @@
 		lastfucked = null
 		lfaction = null
 
-	if(world.time >= pleasure_CD && (!lastfucked && !lastreceived))
-		pleasure -= 3
-		pleasure_CD = world.time + 10
+		if(world.time >= pleasure_CD)
+			pleasure -= 3
+			pleasure_CD = world.time + 10
+
 
 	if(pleasure <= 0)
 		pleasure = 0
