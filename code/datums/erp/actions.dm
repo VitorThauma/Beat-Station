@@ -119,17 +119,15 @@
 		return -1
 	if(H.incapacitated())
 		return -1
+	if(H == P)
+		return -1
 	if(!H.check_has_mouth() || !P.has_penis())
 		return -1
-
 	if(isfuck(P.lfaction))
 		return 0
 	if(!H.is_face_clean())
 		return 0
 	if(!P.is_nude())
-		return 0
-
-	if(P.lastfucked != H && istype(P.lfaction, /datum/forbidden/action/fuck))
 		return 0
 
 	return 1
